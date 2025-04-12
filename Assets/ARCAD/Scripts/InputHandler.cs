@@ -43,7 +43,7 @@ public class InputHandler : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
         { 
-            Debug.DrawRay(playerCam.transform.position, playerCam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow); 
+            //Debug.DrawRay(playerCam.transform.position, playerCam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow); 
             objectViewText.text = hit.transform.name;
             debuggingSphere.transform.position = hit.point;
         }
@@ -55,16 +55,19 @@ public class InputHandler : MonoBehaviour
         if(flipFlop(leftClick.IsPressed())) {
             RaycastHit obectHit;
             Debug.Log("creating ray");
-            Ray userClicked = HandleUtility.GUIPointToWorldRay(pointerPosition.ReadValue<Vector2>());
-            Debug.DrawRay(userClicked.GetPoint(0), userClicked.direction, Color.green); 
-            if (Physics.Raycast (userClicked.GetPoint(0), userClicked.direction, out obectHit, Mathf.Infinity)) {
-                Debug.Log(obectHit.point); 
-                GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
-                spawnedCube.transform.position = obectHit.point;
-                spawnedCube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            }
-
-
+            // The direction that the camera is facing (transform.forwards) will always point towards the center
+            // of the camera thus making it obselete for our purposes
+            Vector3 cursorWorldPos = playerCam.ScreenToWorldPoint(new Vector3(pointerPosition.ReadValue<Vector2>().x, 
+                    pointerPosition.ReadValue<Vector2>().y, playerCam.nearClipPlane));
+            Debug.DrawRay(cursorWorldPos, Vector3.Cross((playerCam.transform.position - cursorWorldPos), playerCam.transform.up)
+                    , Color.green); 
+            // if (Physics.Raycast(playerCam.ScreenToWorldPoint(pointerPosition.ReadValue<Vector2>()),
+            //         playerCam.transform.forward, out obectHit)) {
+            //     Debug.Log(obectHit.point); 
+            //     GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
+            //     spawnedCube.transform.position = obectHit.point;
+            //     spawnedCube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            // }
         }
 
 
