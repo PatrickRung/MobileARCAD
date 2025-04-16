@@ -7,7 +7,8 @@ public class InputHandler : MonoBehaviour
     public bool debugMode = false;
     public Camera playerCam;
     //Debugging
-    public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos;
+    public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
+                            userDoubleTap;
 
     public GameObject debuggingSphere;
     //inputs
@@ -73,7 +74,7 @@ public class InputHandler : MonoBehaviour
                     //recast ray to get position behind object
                     RaycastHit surface;
                     Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-                    obectHit.transform.position = surface.point + (obectHit.normal*
+                    obectHit.transform.position = surface.point + (surface.normal*
                                                         (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
                                                         obectHit.transform.localScale.x);
                     obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
