@@ -73,15 +73,20 @@ public class InputHandler : MonoBehaviour
                     //recast ray to get position behind object
                     RaycastHit surface;
                     Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-                    obectHit.transform.position = surface.point;
-                    
+                    obectHit.transform.position = surface.point + (obectHit.normal*
+                                                        (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                                        obectHit.transform.localScale.x);
                     obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
                 }
                 else if(fliFlopedInput){
                     Debug.Log(obectHit.point); 
                     GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
-                    spawnedCube.transform.position = obectHit.point + obectHit.normal;
                     spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                    // For some reason you need to multiply by 2
+                    spawnedCube.transform.position = obectHit.point + (obectHit.normal*
+                                                        (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                                        spawnedCube.transform.localScale.x);
+
                 }
             }
 
