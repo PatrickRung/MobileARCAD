@@ -118,7 +118,16 @@ public class InputHandler : MonoBehaviour
                         obectHit.transform.position = surface.point + (surface.normal*
                                                             (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
                                                             obectHit.transform.localScale.x);
-                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
+                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;
+
+                        // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
+                        if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
+                            Debug.Log("Algining" + surface.normal );
+                            Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
+                            objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
+                                                                            orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
+                                                                            orignallObjectRot.z);
+                        }
                     }
                 }
                 else if(fliFlopedInput){
