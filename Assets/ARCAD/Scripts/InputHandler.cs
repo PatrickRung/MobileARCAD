@@ -9,11 +9,12 @@ public class InputHandler : MonoBehaviour
     public Camera playerCam;
     //Debugging
     public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
-                            userDoubleTap;
+                            userDoubleTap, secondButtonPress;
 
     public GameObject debuggingSphere;
     //inputs
     public InputAction leftClick;
+    public InputAction touchTwoPressed;
     public InputAction pointerPosition;
     public InputAction touchOne;
     public InputAction touchTwo;
@@ -33,6 +34,7 @@ public class InputHandler : MonoBehaviour
         touchOne.Enable();
         touchTwo.Enable();
         pointerPosition.Enable();
+        touchTwoPressed.Enable();
         if(!debugMode) {
             debuggingSphere.SetActive(false);
         }
@@ -48,22 +50,12 @@ public class InputHandler : MonoBehaviour
         rotationText.text = "" + playerCam.transform.rotation;
         pressPos.text = "position: " + pointerPosition.ReadValue<Vector2>();
         userPressed.text = "user clicked" +  leftClick.IsPressed();
-
-        //What is the user looking at
-        RaycastHit hit;
-        if (Physics.Raycast(playerCam.transform.position, playerCam.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
-        { 
-            //Debug.DrawRay(playerCam.transform.position, playerCam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow); 
-            objectViewText.text = hit.transform.name;
-            if(debugMode) {
-                debuggingSphere.transform.position = hit.point;
-            }
-
-        }
-        else {
-            objectViewText.text = "nothing";
-        }
+        secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
+        bool secondPlayerClick = touchTwoPressed.IsPressed();
         bool fliFlopedInput = flipFlop(leftClick.IsPressed());
+
+
+
         // If both fingers pressed down rotate
         if(leftClick.IsPressed()) {
             RaycastHit obectHit;
@@ -76,7 +68,7 @@ public class InputHandler : MonoBehaviour
                 if(obectHit.transform.gameObject.tag == "SpawnObjects") {
                     objectHeld = obectHit.transform.gameObject;
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
-                    if(touchTwo.IsPressed()) {
+                    if(secondPlayerClick) {
                         Vector2 firstPoint;
                         Vector2 secondPoint;
                         // Both fingers are pressing the screen
@@ -157,6 +149,7 @@ public class InputHandler : MonoBehaviour
     }
 
     public void rotateObject() {
+        userDoubleTap.text = "" + currRotation;
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
