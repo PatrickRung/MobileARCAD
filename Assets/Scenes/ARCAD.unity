@@ -1226,6 +1226,7 @@ MonoBehaviour:
   objectViewText: {fileID: 1552246603}
   userPressed: {fileID: 721665175}
   pressPos: {fileID: 1622749538}
+  userDoubleTap: {fileID: 0}
   debuggingSphere: {fileID: 1143504219}
   leftClick:
     m_Name: Left Click
@@ -1283,6 +1284,40 @@ MonoBehaviour:
       m_Processors: 
       m_Groups: 
       m_Action: Pointer Position
+      m_Flags: 0
+    m_Flags: 0
+  touchOne:
+    m_Name: Touch One
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: ea62985e-e9ba-40e0-b7ee-c524d654de14
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 5445873b-95ac-4194-9d59-665f55a286d8
+      m_Path: <Touchscreen>/touch0
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch One
+      m_Flags: 0
+    m_Flags: 0
+  touchTwo:
+    m_Name: Touch Two
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 9e30fb89-960c-42a2-bfa0-6bcf570c12a5
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3806b2c2-c6d7-4970-87f8-540a7f38ee56
+      m_Path: <Touchscreen>/touch1
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch Two
       m_Flags: 0
     m_Flags: 0
   objectHolder: {fileID: 464095907}

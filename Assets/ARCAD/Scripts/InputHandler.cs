@@ -14,6 +14,8 @@ public class InputHandler : MonoBehaviour
     //inputs
     public InputAction leftClick;
     public InputAction pointerPosition;
+    public InputAction touchOne;
+    public InputAction touchTwo;
     
 
 
@@ -26,6 +28,8 @@ public class InputHandler : MonoBehaviour
         //enable the inputs that we use
         //Must enable otherwise input action will not work
         leftClick.Enable();
+        touchOne.Enable();
+        touchTwo.Enable();
         pointerPosition.Enable();
         if(!debugMode) {
             debuggingSphere.SetActive(false);
