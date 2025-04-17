@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,7 +17,8 @@ public class InputHandler : MonoBehaviour
     public InputAction pointerPosition;
     public InputAction touchOne;
     public InputAction touchTwo;
-    
+    private float currRotation = 0;
+    private float rotSensitivity= 20f;
 
 
     public GameObject objectHolder;
@@ -34,8 +36,11 @@ public class InputHandler : MonoBehaviour
         if(!debugMode) {
             debuggingSphere.SetActive(false);
         }
+        
 
     }
+
+    private GameObject objectHeld;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -59,29 +64,70 @@ public class InputHandler : MonoBehaviour
             objectViewText.text = "nothing";
         }
         bool fliFlopedInput = flipFlop(leftClick.IsPressed());
-        //What did the user press on
+        // If both fingers pressed down rotate
         if(leftClick.IsPressed()) {
             RaycastHit obectHit;
             Debug.Log("creating ray");
-            // The direction that the camera is facing (transform.forwards) will always point towards the center
-            // of the camera thus making it obselete for our purposes
-            // Vector3 cursorWorldPos = playerCam.ScreenToWorldPoint(new Vector3(pointerPosition.ReadValue<Vector2>().x, 
-            //         pointerPosition.ReadValue<Vector2>().y, playerCam.nearClipPlane));
 
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green, 2f);
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out obectHit)) {
                 if(obectHit.transform.gameObject.tag == "SpawnObjects") {
-                    Debug.Log("object interaction");
-                    obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
-                    //recast ray to get position behind object
-                    RaycastHit surface;
-                    Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-                    obectHit.transform.position = surface.point + (surface.normal*
-                                                        (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
-                                                        obectHit.transform.localScale.x);
-                    obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
+                    objectHeld = obectHit.transform.gameObject;
+                    // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
+                    if(touchTwo.IsPressed()) {
+                        Vector2 firstPoint;
+                        Vector2 secondPoint;
+                        // Both fingers are pressing the screen
+                        if(Application.isMobilePlatform) {
+                            firstPoint = touchOne.ReadValue<Vector2>();
+                            secondPoint = touchTwo.ReadValue<Vector2>();
+
+                        }
+                        else {
+                            firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
+                            secondPoint = pointerPosition.ReadValue<Vector2>();
+                            Debug.Log("Double click works");
+                        }   
+
+                        if(!prevTwo) {
+                            prevTwo = true;
+                            orignallRot = firstPoint - secondPoint;
+                            currRotation = 0f;
+                            orignallObjectRot = obectHit.transform.eulerAngles;
+                        }
+                        else {
+                            currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
+                        }
+                        Debug.Log(currRotation);
+                        userDoubleTap.text = "" + currRotation;
+
+                        //get surface noraml so that we can rotate arond that axis
+                                                Debug.Log("object interaction");
+                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
+                        //recast ray to get position behind object
+                        RaycastHit surface;
+                        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
+                        objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
+                                                                            orignallObjectRot.y + currRotation,
+                                                                            orignallObjectRot.z);
+                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
+
+                    }
+                    else {
+                        userDoubleTap.text = "One finger down and we are translating object";
+                        // One finger is pressing the screen
+                                                Debug.Log("object interaction");
+                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
+                        //recast ray to get position behind object
+                        RaycastHit surface;
+                        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
+                        obectHit.transform.position = surface.point + (surface.normal*
+                                                            (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                                            obectHit.transform.localScale.x);
+                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
+                    }
                 }
                 else if(fliFlopedInput){
                     Debug.Log(obectHit.point); 
@@ -96,9 +142,57 @@ public class InputHandler : MonoBehaviour
             }
 
         }
+        // Reset double touchscreen mechanic
+        if(!touchOne.IsPressed() || !touchTwo.IsPressed()) {
+            prevTwo = false;
+            orignallRot = new Vector3(0,0,0);
+            orignallObjectRot = new Vector3(0,0,0);
+            Debug.Log("reset");
+        }
+        else {
+            rotateObject();
+        }
 
 
     }
+
+    public void rotateObject() {
+        Vector2 firstPoint;
+        Vector2 secondPoint;
+        // Both fingers are pressing the screen
+        if(Application.isMobilePlatform) {
+            firstPoint = touchOne.ReadValue<Vector2>();
+            secondPoint = touchTwo.ReadValue<Vector2>();
+
+        }
+        else {
+            firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
+            secondPoint = pointerPosition.ReadValue<Vector2>();
+            Debug.Log("Double click works");
+        }   
+
+        if(!prevTwo) {
+            prevTwo = true;
+            orignallRot = firstPoint - secondPoint;
+            currRotation = 0f;
+        }
+        else {
+            currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
+        }
+        if(Application.isMobilePlatform) {
+            objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
+                                                    orignallObjectRot.y - (currRotation * rotSensitivity),
+                                                    orignallObjectRot.z);
+        }
+        else {
+            objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
+                                                    orignallObjectRot.y + currRotation,
+                                                    orignallObjectRot.z);
+        } 
+    }
+    private Vector2 orignallRot;
+    private Vector3 orignallObjectRot;
+    bool prevTwo = false;
     bool prev = false;
     private bool flipFlop(bool input) {
         bool returnVal = false;

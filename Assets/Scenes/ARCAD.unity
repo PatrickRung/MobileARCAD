@@ -390,9 +390,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2078072026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -204, y: -39.3}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 248, y: -39.3}
   m_SizeDelta: {x: 518.88, y: 60.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &721665175
@@ -1086,9 +1086,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2078072026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 36, y: -84}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 227, y: -84}
   m_SizeDelta: {x: 518.88, y: 89.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1910879942
@@ -1200,7 +1200,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2021248472}
   - component: {fileID: 2021248471}
-  - component: {fileID: 2021248473}
   m_Layer: 0
   m_Name: UserInputHandler
   m_TagString: Untagged
@@ -1226,7 +1225,7 @@ MonoBehaviour:
   objectViewText: {fileID: 1552246603}
   userPressed: {fileID: 721665175}
   pressPos: {fileID: 1622749538}
-  userDoubleTap: {fileID: 0}
+  userDoubleTap: {fileID: 1910879942}
   debuggingSphere: {fileID: 1143504219}
   leftClick:
     m_Name: Left Click
@@ -1296,7 +1295,23 @@ MonoBehaviour:
     m_SingletonActionBindings:
     - m_Name: 
       m_Id: 5445873b-95ac-4194-9d59-665f55a286d8
-      m_Path: <Touchscreen>/touch0
+      m_Path: <Touchscreen>/touch0/position
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch One
+      m_Flags: 0
+    - m_Name: 
+      m_Id: a3c4f77a-2b87-4fea-9607-ab4ba37a797d
+      m_Path: <Mouse>/leftButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch One
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 7dea9382-0b41-447d-a8f9-56c015916406
+      m_Path: <Keyboard>/e
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -1313,7 +1328,23 @@ MonoBehaviour:
     m_SingletonActionBindings:
     - m_Name: 
       m_Id: 3806b2c2-c6d7-4970-87f8-540a7f38ee56
-      m_Path: <Touchscreen>/touch1
+      m_Path: <Touchscreen>/touch1/position
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch Two
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 1ccb8577-462f-4251-bfe5-6a064206767a
+      m_Path: <Mouse>/rightButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch Two
+      m_Flags: 0
+    - m_Name: 
+      m_Id: f3d0080f-bbc1-48fb-836f-af80d3258665
+      m_Path: <Keyboard>/r
       m_Interactions: 
       m_Processors: 
       m_Groups: 
@@ -1338,33 +1369,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2021248473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2021248470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 336d0aecb8db59a4590ebc19b4449275, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  primaryButtonPress:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11500000, guid: d806525c0444400588f5a7800297b7b5, type: 3}
-        m_TargetAssemblyTypeName: UnityEngine.InputSystem.InputActionAsset, Unity.InputSystem
-        m_MethodName: Enable
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
 --- !u!1 &2078072022
 GameObject:
   m_ObjectHideFlags: 0
