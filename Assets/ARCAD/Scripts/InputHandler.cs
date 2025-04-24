@@ -9,7 +9,7 @@ public class InputHandler : MonoBehaviour
     public Camera playerCam;
     //Debugging
     public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
-                            userDoubleTap, secondButtonPress;
+                            userDoubleTap, secondButtonPress, itemHeldID;
 
     public GameObject debuggingSphere;
     //inputs
@@ -51,6 +51,8 @@ public class InputHandler : MonoBehaviour
         pressPos.text = "position: " + pointerPosition.ReadValue<Vector2>();
         userPressed.text = "user clicked" +  leftClick.IsPressed();
         secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
+
+
         bool secondPlayerClick = touchTwoPressed.IsPressed();
         bool fliFlopedInput = flipFlop(leftClick.IsPressed());
 
@@ -59,53 +61,17 @@ public class InputHandler : MonoBehaviour
         // If both fingers pressed down rotate
         if(leftClick.IsPressed()) {
             RaycastHit obectHit;
-            Debug.Log("creating ray");
-
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green, 2f);
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out obectHit)) {
+
+
                 if(obectHit.transform.gameObject.tag == "SpawnObjects") {
                     objectHeld = obectHit.transform.gameObject;
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
                     if(secondPlayerClick) {
-                        Vector2 firstPoint;
-                        Vector2 secondPoint;
-                        // Both fingers are pressing the screen
-                        if(Application.isMobilePlatform) {
-                            firstPoint = touchOne.ReadValue<Vector2>();
-                            secondPoint = touchTwo.ReadValue<Vector2>();
-
-                        }
-                        else {
-                            firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
-                            secondPoint = pointerPosition.ReadValue<Vector2>();
-                            Debug.Log("Double click works");
-                        }   
-
-                        if(!prevTwo) {
-                            prevTwo = true;
-                            orignallRot = firstPoint - secondPoint;
-                            currRotation = 0f;
-                            orignallObjectRot = obectHit.transform.eulerAngles;
-                        }
-                        else {
-                            currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
-                        }
-                        Debug.Log(currRotation);
-                        userDoubleTap.text = "" + currRotation;
-
-                        //get surface noraml so that we can rotate arond that axis
-                                                Debug.Log("object interaction");
-                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
-                        //recast ray to get position behind object
-                        RaycastHit surface;
-                        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-                        objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
-                                                                            orignallObjectRot.y + currRotation,
-                                                                            orignallObjectRot.z);
-                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;;
-
+                        rotateObject();
                     }
                     else {
                         userDoubleTap.text = "One finger down and we are translating object";
@@ -131,14 +97,8 @@ public class InputHandler : MonoBehaviour
                     }
                 }
                 else if(fliFlopedInput){
-                    Debug.Log(obectHit.point); 
-                    GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
-                    spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                    // For some reason you need to multiply by 2
-                    spawnedCube.transform.position = obectHit.point + (obectHit.normal*
-                                                        (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
-                                                        spawnedCube.transform.localScale.x);
-
+                    // Spawn object
+                    objectHeld = spawnObject(obectHit);
                 }
             }
 
@@ -151,6 +111,7 @@ public class InputHandler : MonoBehaviour
             Debug.Log("reset");
         }
         else {
+            // rotate obejct
             rotateObject();
         }
 
@@ -165,7 +126,6 @@ public class InputHandler : MonoBehaviour
         if(Application.isMobilePlatform) {
             firstPoint = touchOne.ReadValue<Vector2>();
             secondPoint = touchTwo.ReadValue<Vector2>();
-
         }
         else {
             firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
@@ -203,5 +163,15 @@ public class InputHandler : MonoBehaviour
         }
         prev = input;
         return returnVal;
+    }
+
+    public GameObject spawnObject(RaycastHit objectHit) {
+        GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
+        spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        // For some reason you need to multiply by 2
+        spawnedCube.transform.position = objectHit.point + (objectHit.normal*
+                                            (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                            spawnedCube.transform.localScale.x);
+        return spawnedCube;
     }
 }
