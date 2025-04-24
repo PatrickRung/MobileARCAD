@@ -60,45 +60,19 @@ public class InputHandler : MonoBehaviour
 
         // If both fingers pressed down rotate
         if(leftClick.IsPressed()) {
-            RaycastHit obectHit;
+            RaycastHit objectHit;
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green, 2f);
 
-            if (Physics.Raycast(ray.origin, ray.direction * 100f, out obectHit)) {
-
-
-                if(obectHit.transform.gameObject.tag == "SpawnObjects") {
-                    objectHeld = obectHit.transform.gameObject;
+            if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
+                if(objectHit.transform.gameObject.tag == "SpawnObjects") {
+                    objectHeld = objectHit.transform.gameObject;
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
-                    if(secondPlayerClick) {
-                        rotateObject();
-                    }
-                    else {
-                        userDoubleTap.text = "One finger down and we are translating object";
-                        // One finger is pressing the screen
-                                                Debug.Log("object interaction");
-                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
-                        //recast ray to get position behind object
-                        RaycastHit surface;
-                        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-                        obectHit.transform.position = surface.point + (surface.normal*
-                                                            (obectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
-                                                            obectHit.transform.localScale.x);
-                        obectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;
-
-                        // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
-                        if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
-                            Debug.Log("Algining" + surface.normal );
-                            Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
-                            objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
-                                                                            orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
-                                                                            orignallObjectRot.z);
-                        }
-                    }
+                    translateObject(objectHit, ray);
                 }
                 else if(fliFlopedInput){
                     // Spawn object
-                    objectHeld = spawnObject(obectHit);
+                    objectHeld = spawnObject(objectHit);
                 }
             }
 
@@ -109,6 +83,9 @@ public class InputHandler : MonoBehaviour
             orignallRot = new Vector3(0,0,0);
             orignallObjectRot = new Vector3(0,0,0);
             Debug.Log("reset");
+        }
+        else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
+
         }
         else {
             // rotate obejct
@@ -152,6 +129,40 @@ public class InputHandler : MonoBehaviour
                                                     orignallObjectRot.z);
         } 
     }
+
+    public GameObject spawnObject(RaycastHit objectHit) {
+        GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
+        spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        // For some reason you need to multiply by 2
+        spawnedCube.transform.position = objectHit.point + (objectHit.normal*
+                                            (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                            spawnedCube.transform.localScale.x);
+        return spawnedCube;
+    }
+
+    public void translateObject(RaycastHit objectHit, Ray ray) {
+        userDoubleTap.text = "One finger down and we are translating object";
+        // One finger is pressing the screen
+                                Debug.Log("object interaction");
+        objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
+        //recast ray to get position behind object
+        RaycastHit surface;
+        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
+        objectHit.transform.position = surface.point + (surface.normal*
+                                            (objectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+                                            objectHit.transform.localScale.x);
+        objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;
+
+        // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
+        if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
+            Debug.Log("Algining" + surface.normal );
+            Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
+            objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
+                                                            orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
+                                                            orignallObjectRot.z);
+        }
+    }
+
     private Vector2 orignallRot;
     private Vector3 orignallObjectRot;
     bool prevTwo = false;
@@ -165,13 +176,5 @@ public class InputHandler : MonoBehaviour
         return returnVal;
     }
 
-    public GameObject spawnObject(RaycastHit objectHit) {
-        GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
-        spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-        // For some reason you need to multiply by 2
-        spawnedCube.transform.position = objectHit.point + (objectHit.normal*
-                                            (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
-                                            spawnedCube.transform.localScale.x);
-        return spawnedCube;
-    }
+
 }
