@@ -24,6 +24,7 @@ public class InputHandler : MonoBehaviour
 
     public GameObject objectHolder;
     public GameObject cubePrefab;
+    private Object[] gameObjects;
     void Start()
     {
         // was to check whether it erros on invalid bindings which it does not
@@ -38,8 +39,13 @@ public class InputHandler : MonoBehaviour
         if(!debugMode) {
             debuggingSphere.SetActive(false);
         }
-        
-
+        // Loads all files in the path Resources/Prefabs.
+        // These files MUST be in the resources folder.
+        // If you want to add more files to the instantiatable prefabs
+        // list simply drag and drop your prefab into the folder labeled
+        // prefabs
+        gameObjects = Resources.LoadAll("Prefabs", typeof(GameObject));
+        Debug.Log(gameObjects.Length);
     }
 
     private GameObject objectHeld;
