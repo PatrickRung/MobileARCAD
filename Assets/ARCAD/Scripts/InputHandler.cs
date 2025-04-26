@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InputHandler : MonoBehaviour
 {
@@ -10,21 +11,24 @@ public class InputHandler : MonoBehaviour
     //Debugging
     public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
                             userDoubleTap, secondButtonPress, itemHeldID;
-
     public GameObject debuggingSphere;
-    //inputs
+
+    // User inputs
     public InputAction leftClick;
     public InputAction touchTwoPressed;
     public InputAction pointerPosition;
     public InputAction touchOne;
     public InputAction touchTwo;
+
+    // Adjustables (related to user input)
     private float currRotation = 0;
     private float rotSensitivity= 20f;
+    public TMP_Dropdown objectSelector;
 
-
+    // Object handling
     public GameObject objectHolder;
     public GameObject cubePrefab;
-    private Object[] gameObjects;
+    private Object[] spawnableObjects;
     void Start()
     {
         // was to check whether it erros on invalid bindings which it does not
@@ -44,8 +48,8 @@ public class InputHandler : MonoBehaviour
         // If you want to add more files to the instantiatable prefabs
         // list simply drag and drop your prefab into the folder labeled
         // prefabs
-        gameObjects = Resources.LoadAll("Prefabs", typeof(GameObject));
-        Debug.Log(gameObjects.Length);
+        spawnableObjects = Resources.LoadAll("Prefabs", typeof(GameObject));
+        Debug.Log(spawnableObjects.Length);
     }
 
     private GameObject objectHeld;
@@ -98,7 +102,6 @@ public class InputHandler : MonoBehaviour
             rotateObject();
         }
 
-
     }
 
     public void rotateObject() {
@@ -137,9 +140,17 @@ public class InputHandler : MonoBehaviour
     }
 
     public GameObject spawnObject(RaycastHit objectHit) {
-        GameObject spawnedCube = Instantiate(cubePrefab, objectHolder.transform);
-        spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        Debug.Log("tried to spawn " + objectSelector.value);
         // For some reason you need to multiply by 2
+        GameObject gameObjectSpawning;
+        if(objectSelector.value >= spawnableObjects.Length) {
+            Debug.Log("Unable to spawn selected object!");
+            
+            return null;
+        }
+        gameObjectSpawning = (GameObject)spawnableObjects[objectSelector.value];
+        GameObject spawnedCube = Instantiate(gameObjectSpawning, objectHolder.transform);
+        spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         spawnedCube.transform.position = objectHit.point + (objectHit.normal*
                                             (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
                                             spawnedCube.transform.localScale.x);
