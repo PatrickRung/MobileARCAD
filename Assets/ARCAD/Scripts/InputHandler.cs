@@ -48,7 +48,7 @@ public class InputHandler : MonoBehaviour
         // If you want to add more files to the instantiatable prefabs
         // list simply drag and drop your prefab into the folder labeled
         // prefabs
-        spawnableObjects = Resources.LoadAll("Prefabs", typeof(GameObject));
+        spawnableObjects = Resources.LoadAll("Prefabs/", typeof(GameObject));
         Debug.Log(spawnableObjects.Length);
     }
 
@@ -72,11 +72,14 @@ public class InputHandler : MonoBehaviour
         if(leftClick.IsPressed()) {
             RaycastHit objectHit;
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
-            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green, 2f);
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
-                if(objectHit.transform.gameObject.tag == "SpawnObjects") {
-                    objectHeld = objectHit.transform.gameObject;
+                GameObject currObjecthit = objectHit.transform.gameObject;
+                if(fliFlopedInput && currObjecthit.tag.Equals("Interactable")) {
+                    currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
+                }
+                else if(currObjecthit.tag.Equals("SpawnObjects")) {
+                    objectHeld = currObjecthit;
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
                     translateObject(objectHit, ray);
                 }
