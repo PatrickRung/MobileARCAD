@@ -45,8 +45,9 @@ public class RevolveTool : MonoBehaviour
         Debug.Log(curvePoints.Count);
         GameObject currMarker = Instantiate(curvaturePointMarker, gameObject.transform);
         currMarker.transform.position = position;
-        curvePoints.Add(new Vector2(position.x, position.y));
+        curvePoints.Add(new Vector2(position.x - gameObject.transform.position.x, position.y - gameObject.transform.position.y));
         if(curvePoints.Count > 4) {
+
             ComputeMeshData();
             generateMesh();
         }
@@ -54,9 +55,6 @@ public class RevolveTool : MonoBehaviour
 
     private void ComputeMeshData()
     {
-        // TODO: Compute and set vertex positions, normals, UVs, and triangle faces
-        // You will want to use curvePoints and subdivisions variables, and you will
-        // want to change the size of these arrays
         int totalVertices = (subdivisions + 1) * curvePoints.Count;
         vertices = new Vector3[totalVertices];
         normals = new Vector3[totalVertices];
@@ -129,8 +127,15 @@ public class RevolveTool : MonoBehaviour
     }
     public Mesh currMesh;
     private void generateMesh() {
+        Debug.Log("creating mesh");
         currMesh = new Mesh();
+        currMesh.uv = UVs;
+        currMesh.vertices = vertices;
+        currMesh.triangles = triangles; 
+        currMesh.normals = normals;
+        
         GameObject newGameObjectMesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        newGameObjectMesh.transform.position = transform.position;
         newGameObjectMesh.GetComponent<MeshFilter>().mesh = currMesh;
     }
 }
