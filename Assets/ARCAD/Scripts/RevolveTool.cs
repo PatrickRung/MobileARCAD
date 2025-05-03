@@ -129,8 +129,8 @@ public class RevolveTool : MonoBehaviour
     private void generateMesh() {
         Debug.Log("creating mesh");
         currMesh = new Mesh();
-        currMesh.uv = UVs;
         currMesh.vertices = vertices;
+        currMesh.uv = UVs;
         currMesh.triangles = triangles; 
         currMesh.normals = normals;
         

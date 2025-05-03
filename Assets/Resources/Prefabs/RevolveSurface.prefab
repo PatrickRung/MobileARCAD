@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6631761786599207361}
   - component: {fileID: 7090954406661301035}
   - component: {fileID: 367836698870769564}
-  - component: {fileID: 2940549392769733704}
   - component: {fileID: -3236026233937950691}
   m_Layer: 0
   m_Name: RevolveSurface
@@ -112,37 +111,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &2940549392769733704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7837706555348783647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 038900f4bfb33c346964bb8d3015e876, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  userInteract:
-    m_Name: User Interact
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 3cf0a871-f310-41f0-9c66-315719265b77
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-  userInteractLoc:
-    m_Name: User Interact Loc
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 1c15e10f-df6c-4ef9-beca-f70719710d6b
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-  curvaturePointMarker: {fileID: 0}
 --- !u!114 &-3236026233937950691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,8 +173,11 @@ MonoBehaviour:
       m_Action: User Interact Loc
       m_Flags: 0
     m_Flags: 0
-  curvaturePointMarker: {fileID: 2253894070175326940, guid: bcb5f0f43d7e2c64fbeb336d3c3f171a,
+  curvaturePointMarker: {fileID: 1411282687987862086, guid: 06f6f75ecdfdd30489f06bff3694524b,
     type: 3}
+  subdivisions: 8
+  curvePoints: []
+  currMesh: {fileID: 0}
 --- !u!1 &7963341175013859361
 GameObject:
   m_ObjectHideFlags: 0
