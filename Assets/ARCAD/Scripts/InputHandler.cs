@@ -95,7 +95,6 @@ public class InputHandler : MonoBehaviour
             prevTwo = false;
             orignallRot = new Vector3(0,0,0);
             orignallObjectRot = new Vector3(0,0,0);
-            Debug.Log("reset");
         }
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
 
