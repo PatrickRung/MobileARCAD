@@ -55,6 +55,7 @@ public class RevolveTool : MonoBehaviour
     private void RefineCurvePoints() {
         // Use Catmull-Room spline equation to smoothen out point
         // formula from here https://www.cs.cmu.edu/~fp/courses/graphics/asst5/catmullRom.pdf
+        curvePoints.Add(curvePoints[curvePoints.Count - 1]);
         curvePointsRefined.RemoveAll(item => true);
         float t = 0.5f;
         for(int i = 0; i < curvePoints.Count; i++) {
@@ -72,6 +73,8 @@ public class RevolveTool : MonoBehaviour
                 curvePointsRefined.Add(pos);
             }
         }
+        curvePoints.RemoveAt(curvePoints.Count - 1);
+
     }
 
     private void ComputeMeshData()
@@ -158,5 +161,6 @@ public class RevolveTool : MonoBehaviour
         GameObject newGameObjectMesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
         newGameObjectMesh.transform.position = transform.position;
         newGameObjectMesh.GetComponent<MeshFilter>().mesh = currMesh;
+        newGameObjectMesh.GetComponent<MeshRenderer>().material = gameObject.GetComponent<MeshRenderer>().material;
     }
 }
