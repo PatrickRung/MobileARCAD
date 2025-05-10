@@ -42,6 +42,11 @@ public class InputHandler : MonoBehaviour
         touchTwoPressed.Enable();
         if(!debugMode) {
             debuggingSphere.SetActive(false);
+            rotationText.gameObject.SetActive(false);
+            pressPos.gameObject.SetActive(false);
+            userPressed.gameObject.SetActive(false);
+            secondButtonPress.gameObject.SetActive(false);
+            userDoubleTap.gameObject.SetActive(false);
         }
         // Loads all files in the path Resources/Prefabs.
         // These files MUST be in the resources folder.
@@ -57,10 +62,13 @@ public class InputHandler : MonoBehaviour
     void FixedUpdate()
     {
         //Assign Debugging text
-        rotationText.text = "" + playerCam.transform.rotation;
-        pressPos.text = "position: " + pointerPosition.ReadValue<Vector2>();
-        userPressed.text = "user clicked" +  leftClick.IsPressed();
-        secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
+        if (debugMode) {
+            rotationText.text = "" + playerCam.transform.rotation;
+            pressPos.text = "position: " + pointerPosition.ReadValue<Vector2>();
+            userPressed.text = "user clicked" +  leftClick.IsPressed();
+            secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
+        }
+
 
 
         bool secondPlayerClick = touchTwoPressed.IsPressed();
@@ -107,7 +115,9 @@ public class InputHandler : MonoBehaviour
     }
 
     public void rotateObject() {
-        userDoubleTap.text = "" + currRotation;
+        if(debugMode) {
+            userDoubleTap.text = "" + currRotation;
+        }
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
@@ -160,9 +170,10 @@ public class InputHandler : MonoBehaviour
     }
 
     public void translateObject(RaycastHit objectHit, Ray ray) {
-        userDoubleTap.text = "One finger down and we are translating object";
+        if(debugMode) {
+            userDoubleTap.text = "One finger down and we are translating object";
+        }
         // One finger is pressing the screen
-                                Debug.Log("object interaction");
         objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
         //recast ray to get position behind object
         RaycastHit surface;
