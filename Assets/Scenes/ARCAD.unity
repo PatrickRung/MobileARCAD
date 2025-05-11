@@ -2917,7 +2917,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1560752883}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2021248473}
+        m_TargetAssemblyTypeName: ToolSelect, Assembly-CSharp
+        m_MethodName: pointEdit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1622749536
 GameObject:
   m_ObjectHideFlags: 0
@@ -3547,7 +3559,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1893648879}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2021248473}
+        m_TargetAssemblyTypeName: ToolSelect, Assembly-CSharp
+        m_MethodName: selectRotate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1910879940
 GameObject:
   m_ObjectHideFlags: 0
@@ -4007,6 +4031,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47e85c00c20ee44c84bff955974b2b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TranslateActive: 0
+  RotateActive: 0
+  EditActive: 0
 --- !u!1 &2078072022
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using TMPro;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -29,10 +30,11 @@ public class InputHandler : MonoBehaviour
     public GameObject objectHolder;
     public GameObject cubePrefab;
     private Object[] spawnableObjects;
+    private ToolSelect playerToolSelect;
     void Start()
     {
-        // was to check whether it erros on invalid bindings which it does not
-        leftClick.AddBinding("THIS BINDING IS INVALID");
+        // Get Game Objects/ scripts
+        playerToolSelect = GetComponent<ToolSelect>();
         //enable the inputs that we use
         //Must enable otherwise input action will not work
         leftClick.Enable();
@@ -82,15 +84,17 @@ public class InputHandler : MonoBehaviour
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                if(fliFlopedInput && currObjecthit.tag.Equals("Interactable")) {
+                objectHeld = currObjecthit;
+                if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
-                else if(currObjecthit.tag.Equals("SpawnObjects")) {
+                else if(currObjecthit.tag.Equals("SpawnObjects") && playerToolSelect.TranslateActive) {
                     objectHeld = currObjecthit;
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
                     translateObject(objectHit, ray);
                 }
-                else if(fliFlopedInput){
+                else if(!currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
+                             && fliFlopedInput){
                     // Spawn object
                     objectHeld = spawnObject(objectHit);
                 }
@@ -106,7 +110,7 @@ public class InputHandler : MonoBehaviour
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
 
         }
-        else {
+        else if(playerToolSelect.RotateActive){
             // rotate obejct
             rotateObject();
         }
