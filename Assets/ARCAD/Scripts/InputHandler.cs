@@ -127,7 +127,7 @@ public class InputHandler : MonoBehaviour
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
 
         }
-        else if(touchOne.IsPressed() && touchTwo.IsPressed()) {
+        else if(!EventSystem.current.IsPointerOverGameObject()  && touchOne.IsPressed() && touchTwo.IsPressed()) {
             if(playerToolSelect.RotateActive){
                 // rotate obejct
                 rotateObject();
