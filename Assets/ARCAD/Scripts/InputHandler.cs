@@ -231,8 +231,8 @@ public class InputHandler : MonoBehaviour
         //recast ray to get position behind object
         RaycastHit surface;
         Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-        objectHit.transform.position = surface.point + (surface.normal*
-                                            (objectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x*2) * 
+        objectHit.transform.position = surface.point + (surface.normal  *
+                                            objectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x * 
                                             objectHit.transform.localScale.x);
         objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;
 
