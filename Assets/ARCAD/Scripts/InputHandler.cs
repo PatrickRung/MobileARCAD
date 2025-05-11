@@ -207,10 +207,13 @@ public class InputHandler : MonoBehaviour
                                                             orignallObjectRot.z);
         }
     }
-    float orginalScale;
+    Vector3 orginalScale;
     private void scaleObject() {
         Vector2 firstPoint;
         Vector2 secondPoint;
+        if(fliFlopedInput) {
+            orginalScale = objectHeld.transform.localScale;
+        }
         // Both fingers are pressing the screen
         if(Application.isMobilePlatform) {
             firstPoint = touchOne.ReadValue<Vector2>();
@@ -230,8 +233,10 @@ public class InputHandler : MonoBehaviour
         else {
             currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
         }
-        float dist = Vector2.Distance(firstPoint, secondPoint) / screenDiag;
-        objectHeld.transform.localScale = new Vector3(dist, dist, dist);
+        float dist = Vector2.Distance(firstPoint, secondPoint) / Screen.currentResolution.height;
+        objectHeld.transform.localScale = new Vector3(dist, 
+                                                        dist, 
+                                                        dist);
         Debug.Log("we are going here");
     }
 
