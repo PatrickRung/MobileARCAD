@@ -25,7 +25,7 @@ public class RevolveTool : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        primaryClickPressed = false;
+
         userInteract.Enable();
     }
 
