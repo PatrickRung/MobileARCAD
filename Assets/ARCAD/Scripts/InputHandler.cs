@@ -31,8 +31,11 @@ public class InputHandler : MonoBehaviour
     public GameObject cubePrefab;
     private Object[] spawnableObjects;
     private ToolSelect playerToolSelect;
+    private bool fliFlopedInput;
+    float screenDiag;
     void Start()
     {
+        screenDiag = math.sqrt(math.pow(Screen.width, 2) + math.pow(Screen.height, 2));
         // Get Game Objects/ scripts
         playerToolSelect = GetComponent<ToolSelect>();
         //enable the inputs that we use
@@ -46,9 +49,11 @@ public class InputHandler : MonoBehaviour
             debuggingSphere.SetActive(false);
             rotationText.gameObject.SetActive(false);
             pressPos.gameObject.SetActive(false);
+            objectViewText.gameObject.SetActive(false);
             userPressed.gameObject.SetActive(false);
             secondButtonPress.gameObject.SetActive(false);
             userDoubleTap.gameObject.SetActive(false);
+            itemHeldID.gameObject.SetActive(false);
         }
         // Loads all files in the path Resources/Prefabs.
         // These files MUST be in the resources folder.
@@ -73,7 +78,7 @@ public class InputHandler : MonoBehaviour
 
 
         bool secondPlayerClick = touchTwoPressed.IsPressed();
-        bool fliFlopedInput = flipFlop(leftClick.IsPressed());
+        fliFlopedInput = flipFlop(leftClick.IsPressed());
 
 
 
@@ -84,7 +89,9 @@ public class InputHandler : MonoBehaviour
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                objectHeld = currObjecthit;
+                if(currObjecthit.tag.Equals("SpawnObjects")) {
+                    objectHeld = currObjecthit;
+                }
                 if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
@@ -98,6 +105,7 @@ public class InputHandler : MonoBehaviour
                     // Spawn object
                     objectHeld = spawnObject(objectHit);
                 }
+
             }
 
         }
@@ -110,11 +118,15 @@ public class InputHandler : MonoBehaviour
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
 
         }
-        else if(playerToolSelect.RotateActive){
-            // rotate obejct
-            rotateObject();
+        else if(touchOne.IsPressed() || touchTwo.IsPressed()) {
+            if(playerToolSelect.RotateActive){
+                // rotate obejct
+                rotateObject();
+            }
+            else if(playerToolSelect.ScaleActive) {
+                scaleObject();
+            }
         }
-
     }
 
     public void rotateObject() {
@@ -194,6 +206,33 @@ public class InputHandler : MonoBehaviour
                                                             orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
                                                             orignallObjectRot.z);
         }
+    }
+    float orginalScale;
+    private void scaleObject() {
+        Vector2 firstPoint;
+        Vector2 secondPoint;
+        // Both fingers are pressing the screen
+        if(Application.isMobilePlatform) {
+            firstPoint = touchOne.ReadValue<Vector2>();
+            secondPoint = touchTwo.ReadValue<Vector2>();
+        }
+        else {
+            firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
+            secondPoint = pointerPosition.ReadValue<Vector2>();
+            Debug.Log("Double click works");
+        }   
+
+        if(!prevTwo) {
+            prevTwo = true;
+            orignallRot = firstPoint - secondPoint;
+            currRotation = 0f;
+        }
+        else {
+            currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
+        }
+        float dist = Vector2.Distance(firstPoint, secondPoint) / screenDiag;
+        objectHeld.transform.localScale = new Vector3(dist, dist, dist);
+        Debug.Log("we are going here");
     }
 
     private Vector2 orignallRot;
