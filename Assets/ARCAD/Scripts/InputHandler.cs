@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -29,6 +30,7 @@ public class InputHandler : MonoBehaviour
     // Object handling
     public GameObject objectHolder;
     public GameObject cubePrefab;
+    public GameObject measureMarker;
     private Object[] spawnableObjects;
     private ToolSelect playerToolSelect;
     private bool fliFlopedInput;
@@ -87,12 +89,16 @@ public class InputHandler : MonoBehaviour
             RaycastHit objectHit;
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
 
-            if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
+            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                if(currObjecthit.tag.Equals("SpawnObjects")) {
+                if(fliFlopedInput && playerToolSelect.measureActive) {
+                    GameObject currMarker = Instantiate(measureMarker);
+                    currMarker.transform.position = objectHit.point;
+                }
+                else if(currObjecthit.tag.Equals("SpawnObjects")) {
                     objectHeld = currObjecthit;
                 }
-                if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
+                else if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
                 else if(currObjecthit.tag.Equals("SpawnObjects") && playerToolSelect.TranslateActive) {
