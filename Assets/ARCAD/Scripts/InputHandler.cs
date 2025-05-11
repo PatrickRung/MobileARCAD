@@ -54,7 +54,6 @@ public class InputHandler : MonoBehaviour
         // list simply drag and drop your prefab into the folder labeled
         // prefabs
         spawnableObjects = Resources.LoadAll("Prefabs/", typeof(GameObject));
-        Debug.Log(spawnableObjects.Length);
     }
 
     private GameObject objectHeld;

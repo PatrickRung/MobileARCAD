@@ -10,7 +10,6 @@ public class RevolveTool : MonoBehaviour
     public InputAction userInteract;
     public InputAction userInteractLoc;
     private Camera playerCam;
-    private bool primaryClickPressed;
     public GameObject curvaturePointMarker;
     // Mesh detail adjustables
     public int subdivisions = 8;
