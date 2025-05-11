@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.WebGL;
 using UnityEngine.UI;
 
 public class InputHandler : MonoBehaviour
@@ -30,10 +31,12 @@ public class InputHandler : MonoBehaviour
     // Object handling
     public GameObject objectHolder;
     public GameObject cubePrefab;
+    // Measuring
     public GameObject measureMarker;
+    public GameObject measureText;
     private Object[] spawnableObjects;
     private ToolSelect playerToolSelect;
-    private bool fliFlopedInput;
+    public bool fliFlopedInput;
     float screenDiag;
     void Start()
     {
@@ -89,14 +92,14 @@ public class InputHandler : MonoBehaviour
             RaycastHit objectHit;
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
 
-            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
+            if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                if(fliFlopedInput && playerToolSelect.measureActive) {
-                    GameObject currMarker = Instantiate(measureMarker);
-                    currMarker.transform.position = objectHit.point;
-                }
-                else if(currObjecthit.tag.Equals("SpawnObjects")) {
+                if(currObjecthit.tag.Equals("SpawnObjects")) {
                     objectHeld = currObjecthit;
+                }
+
+                if(fliFlopedInput && playerToolSelect.measureActive) {
+                    measureToolSpawn(objectHit);
                 }
                 else if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
@@ -106,7 +109,8 @@ public class InputHandler : MonoBehaviour
                     // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
                     translateObject(objectHit, ray);
                 }
-                else if(!currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
+                else if(!EventSystem.current.IsPointerOverGameObject() && 
+                            !currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
                              && fliFlopedInput){
                     // Spawn object
                     objectHeld = spawnObject(objectHit);
@@ -133,6 +137,35 @@ public class InputHandler : MonoBehaviour
                 scaleObject();
             }
         }
+    }
+
+    GameObject pointOne;
+    GameObject pointTwo;
+    GameObject measureTextCurr;
+    // Instantiates new point to measure to and displays measurement in worldspace
+    private void measureToolSpawn(RaycastHit objectHit) {
+        Debug.Log("spawn");
+        GameObject currMarker = Instantiate(measureMarker);
+        currMarker.transform.position = objectHit.point;
+        if(pointOne == null) {
+            pointOne = currMarker;
+        }
+        else if(pointTwo == null) {
+            pointTwo = currMarker;
+        }
+        else {
+            Destroy(pointOne);
+            pointOne = pointTwo;
+            pointTwo = currMarker;
+        }
+        float Distance = Vector3.Distance(pointOne.transform.position, pointTwo.transform.position);
+        if(measureTextCurr == null) {
+            measureTextCurr = Instantiate(measureText);
+        }
+        measureTextCurr.gameObject.transform.position = ((pointOne.transform.position - pointTwo.transform.position) / 2) + pointTwo.transform.position;
+        measureTextCurr.gameObject.transform.position += objectHit.normal * 0.2f;
+        measureTextCurr.transform.GetChild(0).GetComponent<TMP_Text>().text = "" + Distance;
+        measureTextCurr.transform.LookAt(playerCam.transform.position);
     }
 
     public void rotateObject() {
