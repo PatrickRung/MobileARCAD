@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.WebGL;
 using UnityEngine.UI;
 
 public class InputHandler : MonoBehaviour
@@ -128,7 +127,7 @@ public class InputHandler : MonoBehaviour
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
 
         }
-        else if(touchOne.IsPressed() || touchTwo.IsPressed()) {
+        else if(touchOne.IsPressed() && touchTwo.IsPressed()) {
             if(playerToolSelect.RotateActive){
                 // rotate obejct
                 rotateObject();
@@ -246,13 +245,11 @@ public class InputHandler : MonoBehaviour
                                                             orignallObjectRot.z);
         }
     }
-    Vector3 orginalScale;
+    // Scales object by the distance between the two fingers on mobile
+    // and the distance from the cursor to the center on PC
     private void scaleObject() {
         Vector2 firstPoint;
         Vector2 secondPoint;
-        if(fliFlopedInput) {
-            orginalScale = objectHeld.transform.localScale;
-        }
         // Both fingers are pressing the screen
         if(Application.isMobilePlatform) {
             firstPoint = touchOne.ReadValue<Vector2>();
@@ -272,6 +269,7 @@ public class InputHandler : MonoBehaviour
         else {
             currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
         }
+        if(!touchOne.IsPressed() || !touchTwo.IsPressed()) { return; }
         float dist = Vector2.Distance(firstPoint, secondPoint) / Screen.currentResolution.height;
         objectHeld.transform.localScale = new Vector3(dist, 
                                                         dist, 
