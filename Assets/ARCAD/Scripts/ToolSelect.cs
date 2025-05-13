@@ -7,11 +7,16 @@ using UnityEngine.UI;
 public class ToolSelect : MonoBehaviour
 {
     public GameObject instructionText;
+    // Sub-menus and selection objects
+    private GameObject modeSelector;
+    private GameObject EditSubMenu;
+    private GameObject AnalysisSubMenu;
     private Button translateButton;
     private Button rotateButton;
     private Button editNodes;
     private Button scaleButton;
     private Button measureButton;
+
     private List<Button> toggles;
 
     public enum state {
@@ -37,12 +42,20 @@ public class ToolSelect : MonoBehaviour
         scaleButton = GameObject.Find("Scaling").GetComponent<Button>();
         measureButton = GameObject.Find("Measure").GetComponent<Button>();
 
+        // Get Sub Menus
+        modeSelector = GameObject.Find("Mode");
+        EditSubMenu = GameObject.Find("EditMenu");
+        AnalysisSubMenu = GameObject.Find("Analysis");
+        
+
         toggles = new List<Button>();
         toggles.Add(translateButton);
         toggles.Add(rotateButton);
         toggles.Add(editNodes);
         toggles.Add(scaleButton);
         toggles.Add(measureButton);
+        modeSelector.SetActive(false);
+
 
         // Clear tools on startup
         clearButtonActive();
@@ -112,9 +125,11 @@ public class ToolSelect : MonoBehaviour
     }
 
     public void activateButtons() {
+        changeModeState();
         foreach(Button currButton in toggles ) {
             currButton.gameObject.SetActive(true);
         }
+        modeSelector.SetActive(true);
         mode = state.Edit;
         TranslateActive = false;
         RotateActive = false;
@@ -122,5 +137,19 @@ public class ToolSelect : MonoBehaviour
         ScaleActive = false;
         measureActive = false;
         instructionText.SetActive(false);
+    }
+
+    public void changeModeState() {
+        TMP_Dropdown dropdown = modeSelector.GetComponent<TMP_Dropdown>();
+        if (dropdown.value == 0) {
+            AnalysisSubMenu.SetActive(false);
+            EditSubMenu.SetActive(true);
+            mode = state.Edit;
+        }
+        else if(dropdown.value == 1) {
+            EditSubMenu.SetActive(false);
+            AnalysisSubMenu.SetActive(true);
+            mode = state.Analysis;
+        }
     }
 }
