@@ -59,6 +59,7 @@ public class ToolSelect : MonoBehaviour
         }
         else {
             scanPeriodOver = true;
+            instructionText.SetActive(false);
             activateButtons();
         }
     }
@@ -99,7 +100,7 @@ public class ToolSelect : MonoBehaviour
         measureActive = false;
     }
 
-    private void deactiveButtons() {
+    public void deactiveButtons() {
         foreach(Button currButton in toggles ) {
             currButton.gameObject.SetActive(false);
         }
@@ -110,7 +111,7 @@ public class ToolSelect : MonoBehaviour
         measureActive = false;
     }
 
-    private void activateButtons() {
+    public void activateButtons() {
         foreach(Button currButton in toggles ) {
             currButton.gameObject.SetActive(true);
         }
