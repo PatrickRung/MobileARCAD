@@ -71,6 +71,7 @@ public class InputHandler : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if(playerToolSelect.mode == ToolSelect.state.Scan) { return; }
         //Assign Debugging text
         if (debugMode) {
             rotationText.text = "" + playerCam.transform.rotation;
