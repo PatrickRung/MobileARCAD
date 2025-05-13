@@ -164,7 +164,10 @@ public class InputHandler : MonoBehaviour
         }
         measureTextCurr.gameObject.transform.position = ((pointOne.transform.position - pointTwo.transform.position) / 2) + pointTwo.transform.position;
         measureTextCurr.gameObject.transform.position += objectHit.normal * 0.2f;
-        measureTextCurr.transform.GetChild(0).GetComponent<TMP_Text>().text = "" + Distance;
+        // Convert from unity world to CM
+        // I measured 30 CM with a ruler and got 0.293029
+        Distance = (Distance / 0.293029f) * 30f;
+        measureTextCurr.transform.GetChild(0).GetComponent<TMP_Text>().text = "" + Distance + " CM";
         measureTextCurr.transform.LookAt(playerCam.transform.position);
     }
 
