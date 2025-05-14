@@ -104,11 +104,6 @@ public class InputHandler : MonoBehaviour
                 else if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
-                else if(currObjecthit.tag.Equals("SpawnObjects") && playerToolSelect.TranslateActive) {
-                    objectHeld = currObjecthit;
-                    // for pc just use e and r to double click on object and the cursor relative to center is the vector we check angle from
-                    translateObject(objectHit, ray);
-                }
                 else if(!EventSystem.current.IsPointerOverGameObject() && 
                             !currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
                              && fliFlopedInput){
@@ -120,13 +115,16 @@ public class InputHandler : MonoBehaviour
 
         }
         // Reset double touchscreen mechanic
-        if(!touchOne.IsPressed() || !touchTwo.IsPressed()) {
+        if(!touchOne.IsPressed() && !touchTwo.IsPressed()) {
             prevTwo = false;
             orignallRot = new Vector3(0,0,0);
             orignallObjectRot = new Vector3(0,0,0);
         }
         else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
-
+            // This means that we are translating
+            if(playerToolSelect.TranslateActive) {
+                translateObject();
+            }
         }
         else if(!EventSystem.current.IsPointerOverGameObject()  && touchOne.IsPressed() && touchTwo.IsPressed()) {
             if(playerToolSelect.RotateActive){
@@ -226,27 +224,25 @@ public class InputHandler : MonoBehaviour
         return spawnedCube;
     }
 
-    public void translateObject(RaycastHit objectHit, Ray ray) {
-        if(debugMode) {
-            userDoubleTap.text = "One finger down and we are translating object";
-        }
-        // One finger is pressing the screen
-        objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = false;
-        //recast ray to get position behind object
-        RaycastHit surface;
-        Physics.Raycast(ray.origin, ray.direction * 100f, out surface);
-        objectHit.transform.position = surface.point + (surface.normal  *
-                                            objectHit.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x * 
-                                            objectHit.transform.localScale.x);
-        objectHit.transform.gameObject.GetComponent<BoxCollider>().enabled = true;
+    public void translateObject() {
+        Debug.Log("we are translating");
+        RaycastHit objectHit;
+        Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
+        // 1 << 6 bitshifts the raycast to only hit layermask 6 being the environment
+        if(Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit, Mathf.Infinity, 1 << 6)) {
+            //recast ray to get position behind object
+            objectHeld.transform.position = objectHit.point + (objectHit.normal  *
+                                                objectHeld.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x * 
+                                                objectHeld.transform.localScale.x);
 
-        // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
-        if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
-            Debug.Log("Algining" + surface.normal );
-            Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
-            objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
-                                                            orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
-                                                            orignallObjectRot.z);
+            // // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
+            // if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
+            //     Debug.Log("Algining" + surface.normal );
+            //     Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
+            //     objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
+            //                                                     orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
+            //                                                     orignallObjectRot.z);
+            // }
         }
     }
     // Scales object by the distance between the two fingers on mobile

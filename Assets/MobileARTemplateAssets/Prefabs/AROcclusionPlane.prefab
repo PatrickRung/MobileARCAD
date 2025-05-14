@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1337561439930679046}
   - component: {fileID: 1337303928915544006}
   - component: {fileID: 2000989330670121048}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AROcclusionPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
