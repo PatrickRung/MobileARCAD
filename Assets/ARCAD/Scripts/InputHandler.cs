@@ -39,6 +39,7 @@ public class InputHandler : MonoBehaviour
     float screenDiag;
     void Start()
     {
+        playerHolding = false;
         screenDiag = math.sqrt(math.pow(Screen.width, 2) + math.pow(Screen.height, 2));
         // Get Game Objects/ scripts
         playerToolSelect = GetComponent<ToolSelect>();
@@ -67,7 +68,8 @@ public class InputHandler : MonoBehaviour
         spawnableObjects = Resources.LoadAll("Prefabs/", typeof(GameObject));
     }
 
-    private GameObject objectHeld;
+    public GameObject objectHeld;
+    bool playerHolding;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -114,24 +116,46 @@ public class InputHandler : MonoBehaviour
             }
 
         }
+        // Inputs that are toggled
+
         // Reset double touchscreen mechanic
-        if(!touchOne.IsPressed() && !touchTwo.IsPressed()) {
+        if (!touchOne.IsPressed() && !touchTwo.IsPressed())
+        {
             prevTwo = false;
-            orignallRot = new Vector3(0,0,0);
-            orignallObjectRot = new Vector3(0,0,0);
+            orignallRot = Vector3.zero;
+            orignallObjectRot = Vector3.zero;
+            // When player is done extruding, record final pos and set length of extrusion to player length
+            if (playerToolSelect.extrudeActive && playerHolding)
+            {
+                playerToolSelect.extrudeActive = false;
+                playerHolding = false;
+                objectHeld.GetComponent<RevolveTool>().finishExtrude();
+            }
+
         }
-        else if(touchOne.IsPressed() && !touchTwo.IsPressed()) {
+        else if (touchOne.IsPressed() && !touchTwo.IsPressed())
+        {
+            Debug.Log(playerToolSelect.extrudeActive);
             // This means that we are translating
-            if(playerToolSelect.TranslateActive) {
+            if (playerToolSelect.TranslateActive)
+            {
                 translateObject();
             }
+            else if (playerToolSelect.extrudeActive && objectHeld.GetComponent<RevolveTool>() != null)
+            {
+                playerHolding = true;
+                objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
+            }
         }
-        else if(!EventSystem.current.IsPointerOverGameObject()  && touchOne.IsPressed() && touchTwo.IsPressed()) {
-            if(playerToolSelect.RotateActive){
+        else if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
+        {
+            if (playerToolSelect.RotateActive)
+            {
                 // rotate obejct
                 rotateObject();
             }
-            else if(playerToolSelect.ScaleActive) {
+            else if (playerToolSelect.ScaleActive)
+            {
                 scaleObject();
             }
         }
@@ -219,8 +243,7 @@ public class InputHandler : MonoBehaviour
         GameObject spawnedCube = Instantiate(gameObjectSpawning, objectHolder.transform);
         spawnedCube.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         spawnedCube.transform.position = objectHit.point + (objectHit.normal*
-                                            (spawnedCube.GetComponent<MeshRenderer>().bounds.size.x*2) * 
-                                            spawnedCube.transform.localScale.x);
+                                            spawnedCube.GetComponent<MeshRenderer>().bounds.size.x / 2);
         return spawnedCube;
     }
 
@@ -231,18 +254,17 @@ public class InputHandler : MonoBehaviour
         // 1 << 6 bitshifts the raycast to only hit layermask 6 being the environment
         if(Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit, Mathf.Infinity, 1 << 6)) {
             //recast ray to get position behind object
-            objectHeld.transform.position = objectHit.point + (objectHit.normal  *
-                                                objectHeld.transform.gameObject.GetComponent<MeshRenderer>().bounds.size.x * 
-                                                objectHeld.transform.localScale.x);
+            objectHeld.transform.position = objectHit.point + (objectHit.normal*
+                                            objectHeld.GetComponent<MeshRenderer>().bounds.size.x / 2);
 
-            // // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
-            // if( !Mathf.Approximately(Vector3.Dot(surface.normal, Vector3.up), 1f)) {
-            //     Debug.Log("Algining" + surface.normal );
-            //     Debug.Log("Algining" + Vector3.Dot(surface.normal, new Vector3(0f,1f,0f) ));
-            //     objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
-            //                                                     orignallObjectRot.y + Vector3.Angle(surface.normal, new Vector3(-1,0,0)), 
-            //                                                     orignallObjectRot.z);
-            // }
+            // Check if the obejct that we transformed is moving to a wall and orient it in the rotation of the wall
+            if( !Mathf.Approximately(Vector3.Dot(objectHit.normal, Vector3.up), 1f)) {
+                Debug.Log("Algining" + objectHit.normal );
+                Debug.Log("Algining" + Vector3.Dot(objectHit.normal, new Vector3(0f,1f,0f) ));
+                objectHeld.transform.eulerAngles = new Vector3(orignallObjectRot.x, 
+                                                                orignallObjectRot.y + Vector3.Angle(objectHit.normal, new Vector3(-1,0,0)), 
+                                                                orignallObjectRot.z);
+            }
         }
     }
     // Scales object by the distance between the two fingers on mobile

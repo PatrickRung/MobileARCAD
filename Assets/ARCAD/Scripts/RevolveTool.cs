@@ -21,11 +21,12 @@ public class RevolveTool : MonoBehaviour
     private int[] triangles;
     private Vector3[] normals;
 
-
+    private Vector2 objectScreenPos;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        objectScreenPos = new Vector2(playerCam.WorldToScreenPoint(gameObject.transform.position).x,
+                                        playerCam.WorldToScreenPoint(gameObject.transform.position).y);
         userInteract.Enable();
     }
 
@@ -44,11 +45,25 @@ public class RevolveTool : MonoBehaviour
         GameObject currMarker = Instantiate(curvaturePointMarker, gameObject.transform);
         currMarker.transform.position = position;
         curvePoints.Add(new Vector2(position.x - gameObject.transform.position.x, position.y - gameObject.transform.position.y));
+    }
+
+    public void useRevolveTool()
+    {
         if(curvePoints.Count > 4) {
             RefineCurvePoints();
             ComputeMeshData();
             generateMesh();
         }
+    }
+    float extrudeLength;
+    public void useExtrudeTool(Vector2 pointerPos)
+    {
+        extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
+        Debug.Log(extrudeLength);
+    }
+    public void finishExtrude()
+    {
+        
     }
     public int u = 1;
     private void RefineCurvePoints() {
@@ -162,4 +177,5 @@ public class RevolveTool : MonoBehaviour
         newGameObjectMesh.GetComponent<MeshFilter>().mesh = currMesh;
         newGameObjectMesh.GetComponent<MeshRenderer>().material = gameObject.GetComponent<MeshRenderer>().material;
     }
+    
 }

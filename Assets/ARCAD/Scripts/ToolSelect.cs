@@ -11,18 +11,25 @@ public class ToolSelect : MonoBehaviour
     private GameObject modeSelector;
     private GameObject EditSubMenu;
     private GameObject AnalysisSubMenu;
+    private GameObject SketchSubMenu;
     private Button translateButton;
     private Button rotateButton;
     private Button editNodes;
     private Button scaleButton;
     private Button measureButton;
+    private Button extrudeButton;
+    private Button revolveButton;
+    public InputHandler playerInputHandler;
+
 
     private List<Button> toggles;
 
-    public enum state {
+    public enum state
+    {
         Scan,
         Edit,
-        Analysis
+        Analysis,
+        Sketch
     }
 
     public state mode;
@@ -32,20 +39,27 @@ public class ToolSelect : MonoBehaviour
     public Boolean EditActive;
     public Boolean ScaleActive;
     public Boolean measureActive;
+    public Boolean extrudeActive;
+    public Boolean revolveActive;
+
     void Start()
     {
         mode = state.Scan;
         // Get UI buttons
         translateButton = GameObject.Find("TranslateTool").GetComponent<Button>();
         rotateButton = GameObject.Find("RotateTool").GetComponent<Button>();
-        editNodes = GameObject.Find("RotGenerateEdit").GetComponent<Button>();
+        editNodes = GameObject.Find("PointEdit").GetComponent<Button>();
         scaleButton = GameObject.Find("Scaling").GetComponent<Button>();
         measureButton = GameObject.Find("Measure").GetComponent<Button>();
+        extrudeButton = GameObject.Find("Extrude").GetComponent<Button>();
+        revolveButton = GameObject.Find("Revolve").GetComponent<Button>();
+        playerInputHandler = GameObject.Find("UserInputHandler").GetComponent<InputHandler>();
 
         // Get Sub Menus
         modeSelector = GameObject.Find("Mode");
         EditSubMenu = GameObject.Find("EditMenu");
         AnalysisSubMenu = GameObject.Find("Analysis");
+        SketchSubMenu = GameObject.Find("Sketch");
         
 
         toggles = new List<Button>();
@@ -54,6 +68,8 @@ public class ToolSelect : MonoBehaviour
         toggles.Add(editNodes);
         toggles.Add(scaleButton);
         toggles.Add(measureButton);
+        toggles.Add(extrudeButton);
+        toggles.Add(revolveButton);
         modeSelector.SetActive(false);
 
 
@@ -102,26 +118,43 @@ public class ToolSelect : MonoBehaviour
         measureButton.image.color = Color.gray;
         measureActive = true;
     }
-    private void clearButtonActive() {
-        foreach(Button currButton in toggles ) {
-            currButton.image.color = Color.white;
+    public void extrudeEdit() {
+        clearButtonActive();
+        extrudeButton.image.color = Color.gray;
+        extrudeActive = true;
+    }
+    public void revolveEdit() {
+        clearButtonActive();
+        if (playerInputHandler.objectHeld.TryGetComponent<RevolveTool>(out RevolveTool revolve))
+        {
+            revolve.useRevolveTool();
         }
+        revolveActive = true;
+    }
+    private void clearEnabledTools()
+    {
         TranslateActive = false;
         RotateActive = false;
         EditActive = false;
         ScaleActive = false;
         measureActive = false;
+        extrudeActive = false;
+        revolveActive = false;
+    }
+    private void clearButtonActive()
+    {
+        foreach (Button currButton in toggles)
+        {
+            currButton.image.color = Color.white;
+        }
+        clearEnabledTools();
     }
 
     public void deactiveButtons() {
         foreach(Button currButton in toggles ) {
             currButton.gameObject.SetActive(false);
         }
-        TranslateActive = false;
-        RotateActive = false;
-        EditActive = false;
-        ScaleActive = false;
-        measureActive = false;
+        clearEnabledTools();
     }
 
     public void activateButtons() {
@@ -131,25 +164,32 @@ public class ToolSelect : MonoBehaviour
         }
         modeSelector.SetActive(true);
         mode = state.Edit;
-        TranslateActive = false;
-        RotateActive = false;
-        EditActive = false;
-        ScaleActive = false;
-        measureActive = false;
+        clearEnabledTools();
         instructionText.SetActive(false);
     }
 
-    public void changeModeState() {
+    public void changeModeState()
+    {
         TMP_Dropdown dropdown = modeSelector.GetComponent<TMP_Dropdown>();
-        if (dropdown.value == 0) {
+        if (dropdown.value == 0)
+        {
             AnalysisSubMenu.SetActive(false);
             EditSubMenu.SetActive(true);
+            SketchSubMenu.SetActive(false);
             mode = state.Edit;
         }
-        else if(dropdown.value == 1) {
+        else if (dropdown.value == 1)
+        {
             EditSubMenu.SetActive(false);
             AnalysisSubMenu.SetActive(true);
+            SketchSubMenu.SetActive(false);
             mode = state.Analysis;
+        }
+        else if(dropdown.value == 2) {
+            EditSubMenu.SetActive(false);
+            AnalysisSubMenu.SetActive(false);
+            SketchSubMenu.SetActive(true);
+            mode = state.Sketch;
         }
     }
 }
