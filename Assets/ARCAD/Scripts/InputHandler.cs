@@ -127,6 +127,7 @@ public class InputHandler : MonoBehaviour
             // When player is done extruding, record final pos and set length of extrusion to player length
             if (playerToolSelect.extrudeActive && playerHolding)
             {
+                Debug.Log("happenign");
                 playerToolSelect.extrudeActive = false;
                 playerHolding = false;
                 objectHeld.GetComponent<RevolveTool>().finishExtrude();

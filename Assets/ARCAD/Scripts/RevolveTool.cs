@@ -59,11 +59,43 @@ public class RevolveTool : MonoBehaviour
     public void useExtrudeTool(Vector2 pointerPos)
     {
         extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
-        Debug.Log(extrudeLength);
+        extrudeLength = -extrudeLength / 100;
+        finishExtrude();
+
     }
     public void finishExtrude()
     {
-        
+        if (curvePoints.Count > 4)
+        {
+            Debug.Log((curvePoints.Count - 1) * 6);
+            int totalVertices = curvePoints.Count * 2;
+            vertices = new Vector3[totalVertices];
+            normals = new Vector3[totalVertices];
+            UVs = new Vector2[totalVertices];
+            triangles = new int[(curvePoints.Count - 1) * 6];
+            int currTriangle = 0;
+            for (int i = 0; i < curvePoints.Count; i++)
+            {
+                vertices[i] = new Vector3(curvePoints[i].x,
+                curvePoints[i].y, 0);
+                vertices[i + curvePoints.Count] = new Vector3(curvePoints[i].x,
+                curvePoints[i].y, extrudeLength / 10f);
+
+                if (i != curvePoints.Count - 1)
+                {
+                    triangles[currTriangle] = i;
+                    triangles[currTriangle + 1] = (i + 1) % totalVertices;
+                    triangles[currTriangle + 2] = (i + curvePoints.Count) % totalVertices;
+                    currTriangle += 3;
+                    // Make triangle 2 for surface
+                    triangles[currTriangle] = (i + curvePoints.Count) % totalVertices;
+                    triangles[currTriangle + 1] = (i + 1) % totalVertices;
+                    triangles[currTriangle + 2] = (i + curvePoints.Count + 1) % totalVertices;
+                    currTriangle += 3;
+                }
+            }
+            generateMesh();
+        }
     }
     public int u = 1;
     private void RefineCurvePoints() {
