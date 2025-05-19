@@ -67,12 +67,13 @@ public class RevolveTool : MonoBehaviour
     {
         if (curvePoints.Count > 4)
         {
+            curvePoints.Add(curvePoints[0]);
             Debug.Log((curvePoints.Count - 1) * 6);
             int totalVertices = curvePoints.Count * 2;
             vertices = new Vector3[totalVertices];
             normals = new Vector3[totalVertices];
             UVs = new Vector2[totalVertices];
-            triangles = new int[(curvePoints.Count - 1) * 6];
+            triangles = new int[((curvePoints.Count - 1) * 6) + ((curvePoints.Count - 2) * 3)];
             int currTriangle = 0;
             for (int i = 0; i < curvePoints.Count; i++)
             {
@@ -94,7 +95,24 @@ public class RevolveTool : MonoBehaviour
                     currTriangle += 3;
                 }
             }
+            // Create caps
+            for (int i = 0; i < curvePoints.Count - 2; i++)
+            {
+                if (i != curvePoints.Count - 1)
+                {
+                    int baseZeroCount = curvePoints.Count - 1;
+                    // triangles[currTriangle] = i;
+                    // triangles[currTriangle + 1] = curvePoints.Count;
+                    // triangles[currTriangle + 2] = i + 1;
+                    // currTriangle += 3;
+                    triangles[currTriangle + 2] = i + baseZeroCount;
+                    triangles[currTriangle + 1] = baseZeroCount + baseZeroCount;
+                    triangles[currTriangle] = i + 1 + baseZeroCount;
+                    currTriangle += 3;
+                }
+            }
             generateMesh();
+            curvePoints.RemoveAt(curvePoints.Count);
         }
     }
     public int u = 1;
