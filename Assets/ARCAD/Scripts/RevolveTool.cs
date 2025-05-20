@@ -111,6 +111,27 @@ public class RevolveTool : MonoBehaviour
                     currTriangle += 3;
                 }
             }
+            // calculate normals
+            int currCount = 0;
+            for(int j = 0; j < curvePoints.Count; j++) {
+                // Calculate normals for not last row
+                Vector3 currTangVec = new Vector3(1, 0, 0);
+                Vector3 diffVec;
+                if(j == 0) {
+                    diffVec = vertices[currCount + 1] - vertices[currCount];
+                }
+                else if(j == curvePoints.Count - 1) {
+                    diffVec = vertices[currCount] - vertices[currCount - 1];
+                }
+                else {
+                    diffVec = vertices[currCount + 1] - vertices[currCount - 1];
+                }
+                normals[currCount] = Vector3.Cross(diffVec, currTangVec);
+                float mag = Mathf.Sqrt(Mathf.Pow(normals[currCount].x, 2) + Mathf.Pow(normals[currCount].y, 2) + Mathf.Pow(normals[currCount].z, 2));
+                normals[currCount] = new Vector3(normals[currCount].x / mag, normals[currCount].y / mag, normals[currCount].z / mag);
+                //UVs[currCount % totalVertices] = new Vector2((float)i /  (float)subdivisions, currHeightLength / heightLength);
+                currCount++;
+            }
             generateMesh();
             curvePoints.RemoveAt(curvePoints.Count);
         }
@@ -214,6 +235,7 @@ public class RevolveTool : MonoBehaviour
         }
     }
     public Mesh currMesh;
+    public GameObject currDesign;
     private void generateMesh() {
         Debug.Log("creating mesh");
         currMesh = new Mesh();
@@ -222,10 +244,12 @@ public class RevolveTool : MonoBehaviour
         currMesh.triangles = triangles; 
         currMesh.normals = normals;
         
-        GameObject newGameObjectMesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newGameObjectMesh.transform.position = transform.position;
-        newGameObjectMesh.GetComponent<MeshFilter>().mesh = currMesh;
-        newGameObjectMesh.GetComponent<MeshRenderer>().material = gameObject.GetComponent<MeshRenderer>().material;
+        if(currDesign == null) {
+            currDesign = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            currDesign.transform.position = transform.position;
+        }
+        currDesign.GetComponent<MeshFilter>().mesh = currMesh;
+        currDesign.GetComponent<MeshRenderer>().material = gameObject.GetComponent<MeshRenderer>().material;
     }
     
 }
