@@ -59,7 +59,7 @@ public class ToolSelect : MonoBehaviour
         modeSelector = GameObject.Find("Mode");
         EditSubMenu = GameObject.Find("EditMenu");
         AnalysisSubMenu = GameObject.Find("Analysis");
-        SketchSubMenu = GameObject.Find("Sketch");
+        SketchSubMenu = GameObject.Find("SketchMenu");
         
 
         toggles = new List<Button>();

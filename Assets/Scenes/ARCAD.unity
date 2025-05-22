@@ -2243,7 +2243,7 @@ GameObject:
   m_Component:
   - component: {fileID: 963407939}
   m_Layer: 0
-  m_Name: Sketch
+  m_Name: SketchMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5998,9 +5998,9 @@ RectTransform:
   - {fileID: 1382960261}
   m_Father: {fileID: 2078072026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 139.70001, y: -108.899994}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -260.3, y: 512.1}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1954134648

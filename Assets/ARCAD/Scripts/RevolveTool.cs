@@ -58,7 +58,16 @@ public class RevolveTool : MonoBehaviour
     float extrudeLength;
     public void useExtrudeTool(Vector2 pointerPos)
     {
-        extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
+        if (Application.isMobilePlatform)
+        {
+            Vector2 objectScreenPos = new Vector2(Camera.main.WorldToScreenPoint(gameObject.transform.position).x,
+                                                    Camera.main.WorldToScreenPoint(gameObject.transform.position).y);
+            extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
+        }
+        else
+        {
+            extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
+        }
         extrudeLength = -extrudeLength / 100;
         finishExtrude();
 

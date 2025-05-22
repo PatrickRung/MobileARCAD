@@ -204,15 +204,14 @@ public class InputHandler : MonoBehaviour
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
-        if(Application.isMobilePlatform) {
+        #if UNITY_ANDROID
             firstPoint = touchOne.ReadValue<Vector2>();
             secondPoint = touchTwo.ReadValue<Vector2>();
-        }
-        else {
+        #else
             firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
             secondPoint = pointerPosition.ReadValue<Vector2>();
             Debug.Log("Double click works");
-        }   
+        #endif
 
         if(!prevTwo) {
             prevTwo = true;
@@ -222,16 +221,15 @@ public class InputHandler : MonoBehaviour
         else {
             currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
         }
-        if(Application.isMobilePlatform) {
+        #if UNITY_ANDROID
             objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
                                                     orignallObjectRot.y - (currRotation * rotSensitivity),
                                                     orignallObjectRot.z);
-        }
-        else {
+        #else
             objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
                                                     orignallObjectRot.y + currRotation,
                                                     orignallObjectRot.z);
-        } 
+        #endif
     }
 
     public GameObject spawnObject(RaycastHit objectHit) {
@@ -277,15 +275,14 @@ public class InputHandler : MonoBehaviour
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
-        if(Application.isMobilePlatform) {
+        #if UNITY_ANDROID
             firstPoint = touchOne.ReadValue<Vector2>();
             secondPoint = touchTwo.ReadValue<Vector2>();
-        }
-        else {
+        #else
             firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
             secondPoint = pointerPosition.ReadValue<Vector2>();
             Debug.Log("Double click works");
-        }   
+        #endif
 
         if(!prevTwo) {
             prevTwo = true;
