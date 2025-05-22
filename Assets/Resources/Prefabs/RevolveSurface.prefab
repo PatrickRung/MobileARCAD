@@ -177,7 +177,10 @@ MonoBehaviour:
     type: 3}
   subdivisions: 8
   curvePoints: []
+  curvePointsRefined: []
+  u: 1
   currMesh: {fileID: 0}
+  currDesign: {fileID: 0}
 --- !u!1 &7963341175013859361
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,7 +195,7 @@ GameObject:
   - component: {fileID: 1695967746060518426}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: SpawnObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

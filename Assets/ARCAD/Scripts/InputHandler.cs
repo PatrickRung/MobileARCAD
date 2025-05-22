@@ -96,7 +96,7 @@ public class InputHandler : MonoBehaviour
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                if(currObjecthit.tag.Equals("SpawnObjects")) {
+                if(currObjecthit.tag.Equals("SpawnObjects") || currObjecthit.tag.Equals("Interactable")) {
                     objectHeld = currObjecthit;
                 }
 
@@ -136,16 +136,19 @@ public class InputHandler : MonoBehaviour
         }
         else if (touchOne.IsPressed() && !touchTwo.IsPressed())
         {
-            Debug.Log(playerToolSelect.extrudeActive);
-            // This means that we are translating
-            if (playerToolSelect.TranslateActive)
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                translateObject();
-            }
-            else if (playerToolSelect.extrudeActive && objectHeld.GetComponent<RevolveTool>() != null)
-            {
-                playerHolding = true;
-                objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
+                Debug.Log(playerToolSelect.extrudeActive);
+                // This means that we are translating
+                if (playerToolSelect.TranslateActive)
+                {
+                    translateObject();
+                }
+                else if (playerToolSelect.extrudeActive && objectHeld.GetComponent<RevolveTool>() != null)
+                {
+                    playerHolding = true;
+                    objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
+                }
             }
         }
         else if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())

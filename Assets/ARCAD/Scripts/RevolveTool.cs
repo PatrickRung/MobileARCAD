@@ -68,7 +68,6 @@ public class RevolveTool : MonoBehaviour
         if (curvePoints.Count > 4)
         {
             curvePoints.Add(curvePoints[0]);
-            Debug.Log((curvePoints.Count - 1) * 6);
             int totalVertices = curvePoints.Count * 2;
             vertices = new Vector3[totalVertices];
             normals = new Vector3[totalVertices];
@@ -129,6 +128,8 @@ public class RevolveTool : MonoBehaviour
                 normals[currCount] = Vector3.Cross(diffVec, currTangVec);
                 float mag = Mathf.Sqrt(Mathf.Pow(normals[currCount].x, 2) + Mathf.Pow(normals[currCount].y, 2) + Mathf.Pow(normals[currCount].z, 2));
                 normals[currCount] = new Vector3(normals[currCount].x / mag, normals[currCount].y / mag, normals[currCount].z / mag);
+                normals[currCount + curvePoints.Count] = normals[currCount];
+                // Debug.DrawLine(vertices[currCount], vertices[currCount] + (normals[currCount] * 4f), Color.green);
                 //UVs[currCount % totalVertices] = new Vector2((float)i /  (float)subdivisions, currHeightLength / heightLength);
                 currCount++;
             }
