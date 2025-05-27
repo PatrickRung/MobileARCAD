@@ -30,6 +30,7 @@ public class InputHandler : MonoBehaviour
     // Object handling
     public GameObject objectHolder;
     public GameObject cubePrefab;
+    public Material selectedMat, unselectedMat;
     // Measuring
     public GameObject measureMarker;
     public GameObject measureText;
@@ -96,20 +97,38 @@ public class InputHandler : MonoBehaviour
 
             if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
                 GameObject currObjecthit = objectHit.transform.gameObject;
-                if(currObjecthit.tag.Equals("SpawnObjects") || currObjecthit.tag.Equals("Interactable")) {
+                if (currObjecthit.tag.Equals("SpawnObjects") || currObjecthit.tag.Equals("Interactable"))
+                {
+
+                    if (objectHeld != null && objectHeld.GetInstanceID() != currObjecthit.GetInstanceID())
+                    {
+                        Debug.Log("here");
+                        objectHeld.gameObject.GetComponent<MeshRenderer>().material =
+                                unselectedMat;
+                    }
                     objectHeld = currObjecthit;
+                    objectHeld.gameObject.GetComponent<MeshRenderer>().material =
+                            selectedMat;
                 }
 
-                if(fliFlopedInput && playerToolSelect.measureActive) {
+                if (fliFlopedInput && playerToolSelect.measureActive)
+                {
                     measureToolSpawn(objectHit);
                 }
-                else if(fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive) {
+                else if (fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive)
+                {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
-                else if(!EventSystem.current.IsPointerOverGameObject() && 
+                else if (!EventSystem.current.IsPointerOverGameObject() &&
                             !currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
-                             && fliFlopedInput){
+                             && fliFlopedInput)
+                {
                     // Spawn object
+                    if (objectHeld != null)
+                    {
+                        objectHeld.GetComponent<MeshRenderer>().material =
+                                unselectedMat;
+                    }
                     objectHeld = spawnObject(objectHit);
                 }
 

@@ -3519,10 +3519,10 @@ RectTransform:
   - {fileID: 1378876682}
   m_Father: {fileID: 1945467056}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -173.7, y: 212.40237}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -140.9, y: -39.2}
+  m_SizeDelta: {x: 293, y: 65.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1382960262
 MonoBehaviour:
@@ -6522,6 +6522,8 @@ MonoBehaviour:
   objectHolder: {fileID: 464095907}
   cubePrefab: {fileID: 2253894070175326940, guid: bcb5f0f43d7e2c64fbeb336d3c3f171a,
     type: 3}
+  selectedMat: {fileID: 2100000, guid: a18aee91f67d7f949b2688ae0adec07e, type: 2}
+  unselectedMat: {fileID: 2100000, guid: cf007fb0a3514b448959fcb4f8ba772b, type: 2}
   measureMarker: {fileID: 2218978998407496733, guid: 6d11773e290ee824ea6e3c1760bf788a,
     type: 3}
   measureText: {fileID: 3972165587838592321, guid: de485ffc7ca065e4f9c1a7538b1b80ff,
