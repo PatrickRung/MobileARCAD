@@ -119,7 +119,7 @@ public class InputHandler : MonoBehaviour
                 {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
-                else if (!EventSystem.current.IsPointerOverGameObject() &&
+                else if (!EventSystem.current.IsPointerOverGameObject() && playerToolSelect.spawnActive &&
                             !currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
                              && fliFlopedInput)
                 {
@@ -151,7 +151,6 @@ public class InputHandler : MonoBehaviour
                 playerHolding = false;
                 objectHeld.GetComponent<RevolveTool>().finishExtrude();
             }
-
         }
         else if (touchOne.IsPressed() && !touchTwo.IsPressed())
         {
@@ -223,13 +222,12 @@ public class InputHandler : MonoBehaviour
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
-        #if UNITY_ANDROID
-            firstPoint = touchOne.ReadValue<Vector2>();
-            secondPoint = touchTwo.ReadValue<Vector2>();
-        #else
+        #if UNITY_EDITOR
             firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
             secondPoint = pointerPosition.ReadValue<Vector2>();
-            Debug.Log("Double click works");
+        #else
+            firstPoint = touchOne.ReadValue<Vector2>();
+            secondPoint = touchTwo.ReadValue<Vector2>();
         #endif
 
         if(!prevTwo) {
@@ -240,13 +238,13 @@ public class InputHandler : MonoBehaviour
         else {
             currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
         }
-        #if UNITY_ANDROID
+        #if UNITY_EDITOR
             objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
-                                                    orignallObjectRot.y - (currRotation * rotSensitivity),
+                                                    orignallObjectRot.y + currRotation,
                                                     orignallObjectRot.z);
         #else
             objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
-                                                    orignallObjectRot.y + currRotation,
+                                                    orignallObjectRot.y - (currRotation * rotSensitivity),
                                                     orignallObjectRot.z);
         #endif
     }
@@ -294,13 +292,12 @@ public class InputHandler : MonoBehaviour
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
-        #if UNITY_ANDROID
-            firstPoint = touchOne.ReadValue<Vector2>();
-            secondPoint = touchTwo.ReadValue<Vector2>();
-        #else
+        #if UNITY_EDITOR
             firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
             secondPoint = pointerPosition.ReadValue<Vector2>();
-            Debug.Log("Double click works");
+        #else
+            firstPoint = touchOne.ReadValue<Vector2>();
+            secondPoint = touchTwo.ReadValue<Vector2>();
         #endif
 
         if(!prevTwo) {

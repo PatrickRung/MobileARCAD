@@ -8,17 +8,18 @@ public class ToolSelect : MonoBehaviour
 {
     public GameObject instructionText;
     // Sub-menus and selection objects
-    private GameObject modeSelector;
-    private GameObject EditSubMenu;
-    private GameObject AnalysisSubMenu;
-    private GameObject SketchSubMenu;
-    private Button translateButton;
-    private Button rotateButton;
-    private Button editNodes;
-    private Button scaleButton;
-    private Button measureButton;
-    private Button extrudeButton;
-    private Button revolveButton;
+    private GameObject modeSelector,
+                        EditSubMenu,
+                        AnalysisSubMenu,
+                        SketchSubMenu;
+    private Button translateButton,
+                    rotateButton,
+                    editNodes,
+                    scaleButton,
+                    measureButton,
+                    extrudeButton,
+                    revolveButton,
+                    spawnButton;
     public InputHandler playerInputHandler;
 
 
@@ -34,13 +35,14 @@ public class ToolSelect : MonoBehaviour
 
     public state mode;
 
-    public Boolean TranslateActive;
-    public Boolean RotateActive;
-    public Boolean EditActive;
-    public Boolean ScaleActive;
-    public Boolean measureActive;
-    public Boolean extrudeActive;
-    public Boolean revolveActive;
+    public Boolean TranslateActive,
+                    RotateActive,
+                    EditActive,
+                    ScaleActive,
+                    measureActive,
+                    extrudeActive,
+                    revolveActive,
+                    spawnActive;
 
     void Start()
     {
@@ -53,6 +55,7 @@ public class ToolSelect : MonoBehaviour
         measureButton = GameObject.Find("Measure").GetComponent<Button>();
         extrudeButton = GameObject.Find("Extrude").GetComponent<Button>();
         revolveButton = GameObject.Find("Revolve").GetComponent<Button>();
+        spawnButton = GameObject.Find("SpawnButton").GetComponent<Button>();
         playerInputHandler = GameObject.Find("UserInputHandler").GetComponent<InputHandler>();
 
         // Get Sub Menus
@@ -70,6 +73,7 @@ public class ToolSelect : MonoBehaviour
         toggles.Add(measureButton);
         toggles.Add(extrudeButton);
         toggles.Add(revolveButton);
+        toggles.Add(spawnButton);
         modeSelector.SetActive(false);
 
 
@@ -123,7 +127,13 @@ public class ToolSelect : MonoBehaviour
         extrudeButton.image.color = Color.gray;
         extrudeActive = true;
     }
-    public void revolveEdit() {
+    public void spawnEdit() {
+        clearButtonActive();
+        spawnButton.image.color = Color.gray;
+        spawnActive = true;
+    }
+    public void revolveEdit()
+    {
         clearButtonActive();
         if (playerInputHandler.objectHeld.TryGetComponent<RevolveTool>(out RevolveTool revolve))
         {
@@ -140,6 +150,7 @@ public class ToolSelect : MonoBehaviour
         measureActive = false;
         extrudeActive = false;
         revolveActive = false;
+        spawnActive = false;
     }
     private void clearButtonActive()
     {
