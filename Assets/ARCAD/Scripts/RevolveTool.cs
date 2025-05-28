@@ -143,7 +143,10 @@ public class RevolveTool : MonoBehaviour
                 currCount++;
             }
             generateMesh();
-            curvePoints.RemoveAt(curvePoints.Count);
+            if (curvePoints.Count <= 0)
+            {
+                curvePoints.RemoveAt(curvePoints.Count);
+            }
         }
     }
     public int u = 1;

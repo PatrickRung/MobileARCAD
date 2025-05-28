@@ -10,6 +10,7 @@ public class InputHandler : MonoBehaviour
 {
     public bool debugMode = false;
     public Camera playerCam;
+
     //Debugging
     public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
                             userDoubleTap, secondButtonPress, itemHeldID;
@@ -40,7 +41,6 @@ public class InputHandler : MonoBehaviour
     float screenDiag;
     void Start()
     {
-        playerHolding = false;
         screenDiag = math.sqrt(math.pow(Screen.width, 2) + math.pow(Screen.height, 2));
         // Get Game Objects/ scripts
         playerToolSelect = GetComponent<ToolSelect>();
@@ -67,35 +67,36 @@ public class InputHandler : MonoBehaviour
         // list simply drag and drop your prefab into the folder labeled
         // prefabs
         spawnableObjects = Resources.LoadAll("Prefabs/", typeof(GameObject));
+        // Extrude tool state
+        extruding = false;
     }
 
     public GameObject objectHeld;
-    bool playerHolding;
+    bool extruding;
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(playerToolSelect.mode == ToolSelect.state.Scan) { return; }
+        if (playerToolSelect.mode == ToolSelect.state.Scan) { return; }
         //Assign Debugging text
-        if (debugMode) {
+        if (debugMode)
+        {
             rotationText.text = "" + playerCam.transform.rotation;
             pressPos.text = "position: " + pointerPosition.ReadValue<Vector2>();
-            userPressed.text = "user clicked" +  leftClick.IsPressed();
+            userPressed.text = "user clicked" + leftClick.IsPressed();
             secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
         }
-
-
 
         bool secondPlayerClick = touchTwoPressed.IsPressed();
         fliFlopedInput = flipFlop(leftClick.IsPressed());
 
-
-
         // If both fingers pressed down rotate
-        if(leftClick.IsPressed()) {
+        if (leftClick.IsPressed())
+        {
             RaycastHit objectHit;
             Ray ray = playerCam.ScreenPointToRay(pointerPosition.ReadValue<Vector2>());
 
-            if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit)) {
+            if (Physics.Raycast(ray.origin, ray.direction * 100f, out objectHit))
+            {
                 GameObject currObjecthit = objectHit.transform.gameObject;
                 if (currObjecthit.tag.Equals("SpawnObjects") || currObjecthit.tag.Equals("Interactable"))
                 {
@@ -111,17 +112,21 @@ public class InputHandler : MonoBehaviour
                             selectedMat;
                 }
 
-                if (fliFlopedInput && playerToolSelect.measureActive)
+                if (fliFlopedInput &&
+                        playerToolSelect.toolSelected == ToolSelect.ToolSelectState.measureState)
                 {
                     measureToolSpawn(objectHit);
                 }
-                else if (fliFlopedInput && currObjecthit.tag.Equals("Interactable") && playerToolSelect.EditActive)
+                else if (fliFlopedInput && currObjecthit.tag.Equals("Interactable") &&
+                            playerToolSelect.toolSelected == ToolSelect.ToolSelectState.EditState)
                 {
                     currObjecthit.GetComponent<RevolveTool>().markPoint(objectHit.point);
                 }
-                else if (!EventSystem.current.IsPointerOverGameObject() && playerToolSelect.spawnActive &&
-                            !currObjecthit.tag.Equals("SpawnObjects") && !currObjecthit.tag.Equals("Interactable")
-                             && fliFlopedInput)
+                else if (!EventSystem.current.IsPointerOverGameObject() &&
+                            playerToolSelect.toolSelected == ToolSelect.ToolSelectState.SpawnState &&
+                            !currObjecthit.tag.Equals("SpawnObjects") &&
+                            !currObjecthit.tag.Equals("Interactable") &&
+                            fliFlopedInput)
                 {
                     // Spawn object
                     if (objectHeld != null)
@@ -135,51 +140,55 @@ public class InputHandler : MonoBehaviour
             }
 
         }
-        // Inputs that are toggled
-
         // Reset double touchscreen mechanic
         if (!touchOne.IsPressed() && !touchTwo.IsPressed())
         {
             prevTwo = false;
             orignallRot = Vector3.zero;
             orignallObjectRot = Vector3.zero;
-            // When player is done extruding, record final pos and set length of extrusion to player length
-            if (playerToolSelect.extrudeActive && playerHolding)
-            {
-                Debug.Log("happenign");
-                playerToolSelect.extrudeActive = false;
-                playerHolding = false;
-                objectHeld.GetComponent<RevolveTool>().finishExtrude();
-            }
         }
-        else if (touchOne.IsPressed() && !touchTwo.IsPressed())
+        
+        switch(playerToolSelect.toolSelected) 
         {
-            if (!EventSystem.current.IsPointerOverGameObject())
+        case ToolSelect.ToolSelectState.RotateState:
+            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
             {
-                Debug.Log(playerToolSelect.extrudeActive);
-                // This means that we are translating
-                if (playerToolSelect.TranslateActive)
-                {
-                    translateObject();
-                }
-                else if (playerToolSelect.extrudeActive && objectHeld.GetComponent<RevolveTool>() != null)
-                {
-                    playerHolding = true;
-                    objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
-                }
-            }
-        }
-        else if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
-        {
-            if (playerToolSelect.RotateActive)
-            {
-                // rotate obejct
                 rotateObject();
             }
-            else if (playerToolSelect.ScaleActive)
+            break;
+        case ToolSelect.ToolSelectState.ScaleState:
+            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
             {
                 scaleObject();
             }
+            break;
+        case ToolSelect.ToolSelectState.ExtrudeState:
+            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+            {
+                if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
+                        objectHeld.GetComponent<RevolveTool>() != null &&
+                        !extruding)
+                {
+                    objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
+                    extruding = true;
+                }
+                else if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
+                            extruding)
+                {
+                    objectHeld.GetComponent<RevolveTool>().finishExtrude();
+                    extruding = false;
+                }
+            }
+            break;
+        case ToolSelect.ToolSelectState.TranslateState:
+            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+            {
+                translateObject();
+            }
+            break;
+        default:
+                // Do nothing
+            break;
         }
     }
 

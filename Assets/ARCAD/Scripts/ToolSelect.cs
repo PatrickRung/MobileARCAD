@@ -34,15 +34,18 @@ public class ToolSelect : MonoBehaviour
     }
 
     public state mode;
-
-    public Boolean TranslateActive,
-                    RotateActive,
-                    EditActive,
-                    ScaleActive,
-                    measureActive,
-                    extrudeActive,
-                    revolveActive,
-                    spawnActive;
+    public enum ToolSelectState
+    {
+        TranslateState,
+        RotateState,
+        EditState,
+        ScaleState,
+        measureState,
+        ExtrudeState,
+        RevolveState,
+        SpawnState
+    }
+    public ToolSelectState toolSelected;
 
     void Start()
     {
@@ -100,37 +103,47 @@ public class ToolSelect : MonoBehaviour
     public void selectTranslate() {
         clearButtonActive();
         translateButton.image.color = Color.gray;
-        TranslateActive = true;
+        toolSelected = ToolSelectState.TranslateState;
     }
     public void selectRotate() {
         clearButtonActive();
         rotateButton.image.color = Color.gray;
-        RotateActive = true;
+        toolSelected = ToolSelectState.RotateState;
+
     }    
     public void pointEdit() {
         clearButtonActive();
         editNodes.image.color = Color.gray;
-        EditActive = true;
+        toolSelected = ToolSelectState.EditState;
     }
     public void scaleEdit() {
         clearButtonActive();
         scaleButton.image.color = Color.gray;
-        ScaleActive = true;
+        toolSelected = ToolSelectState.ScaleState;
+
     }
     public void measureeEdit() {
         clearButtonActive();
         measureButton.image.color = Color.gray;
-        measureActive = true;
+        toolSelected = ToolSelectState.measureState;
     }
     public void extrudeEdit() {
-        clearButtonActive();
-        extrudeButton.image.color = Color.gray;
-        extrudeActive = true;
+        if (toolSelected == ToolSelectState.ExtrudeState)
+        {
+            clearButtonActive();
+            extrudeButton.image.color = Color.white;
+        }
+        else
+        {
+            clearButtonActive();
+            extrudeButton.image.color = Color.gray;
+        }
+        toolSelected = ToolSelectState.ExtrudeState;
     }
     public void spawnEdit() {
         clearButtonActive();
         spawnButton.image.color = Color.gray;
-        spawnActive = true;
+        toolSelected = ToolSelectState.SpawnState;
     }
     public void revolveEdit()
     {
@@ -139,18 +152,7 @@ public class ToolSelect : MonoBehaviour
         {
             revolve.useRevolveTool();
         }
-        revolveActive = true;
-    }
-    private void clearEnabledTools()
-    {
-        TranslateActive = false;
-        RotateActive = false;
-        EditActive = false;
-        ScaleActive = false;
-        measureActive = false;
-        extrudeActive = false;
-        revolveActive = false;
-        spawnActive = false;
+        toolSelected = ToolSelectState.RevolveState;
     }
     private void clearButtonActive()
     {
@@ -158,14 +160,12 @@ public class ToolSelect : MonoBehaviour
         {
             currButton.image.color = Color.white;
         }
-        clearEnabledTools();
     }
 
     public void deactiveButtons() {
         foreach(Button currButton in toggles ) {
             currButton.gameObject.SetActive(false);
         }
-        clearEnabledTools();
     }
 
     public void activateButtons() {
@@ -175,7 +175,6 @@ public class ToolSelect : MonoBehaviour
         }
         modeSelector.SetActive(true);
         mode = state.Edit;
-        clearEnabledTools();
         instructionText.SetActive(false);
     }
 
