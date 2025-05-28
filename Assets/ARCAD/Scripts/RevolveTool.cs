@@ -76,6 +76,7 @@ public class RevolveTool : MonoBehaviour
     {
         if (curvePoints.Count > 4)
         {
+            curvePoints.Sort((element1, element2) => element2.y.CompareTo(element1.y));
             curvePoints.Add(curvePoints[0]);
             int totalVertices = curvePoints.Count * 2;
             vertices = new Vector3[totalVertices];
