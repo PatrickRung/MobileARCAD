@@ -205,6 +205,7 @@ public class ToolSelect : MonoBehaviour
         // To prevent potential misclicks we have a temporary no functionality
         // state that we go to when we change tools
         toolSelected = ToolSelectState.InactiveState;
+        playerInputHandler.measureToolDespawn();
         if (dropdown.value == 0)
         {
             AnalysisSubMenu.SetActive(false);

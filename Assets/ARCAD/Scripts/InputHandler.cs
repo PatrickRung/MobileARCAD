@@ -219,38 +219,49 @@ public class InputHandler : MonoBehaviour
         measureTextCurr.transform.LookAt(playerCam.transform.position);
     }
 
-    public void rotateObject() {
-        if(debugMode) {
+    public void measureToolDespawn()
+    {
+        Destroy(pointOne);
+        Destroy(pointTwo);
+        Destroy(measureTextCurr);
+    }
+
+    public void rotateObject()
+    {
+        if (debugMode)
+        {
             userDoubleTap.text = "" + currRotation;
         }
         Vector2 firstPoint;
         Vector2 secondPoint;
         // Both fingers are pressing the screen
-        #if UNITY_EDITOR
-            firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
-            secondPoint = pointerPosition.ReadValue<Vector2>();
-        #else
+#if UNITY_EDITOR
+        firstPoint = new Vector2(Screen.currentResolution.width / 2, Screen.currentResolution.height / 2);
+        secondPoint = pointerPosition.ReadValue<Vector2>();
+#else
             firstPoint = touchOne.ReadValue<Vector2>();
             secondPoint = touchTwo.ReadValue<Vector2>();
-        #endif
+#endif
 
-        if(!prevTwo) {
+        if (!prevTwo)
+        {
             prevTwo = true;
             orignallRot = firstPoint - secondPoint;
             currRotation = 0f;
         }
-        else {
+        else
+        {
             currRotation = Vector2.SignedAngle(orignallRot, secondPoint);
         }
-        #if UNITY_EDITOR
-            objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
-                                                    orignallObjectRot.y + currRotation,
-                                                    orignallObjectRot.z);
-        #else
+#if UNITY_EDITOR
+        objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
+                                                orignallObjectRot.y + currRotation,
+                                                orignallObjectRot.z);
+#else
             objectHeld.transform.localEulerAngles = new Vector3(orignallObjectRot.x,
                                                     orignallObjectRot.y - (currRotation * rotSensitivity),
                                                     orignallObjectRot.z);
-        #endif
+#endif
     }
 
     public GameObject spawnObject(RaycastHit objectHit) {
