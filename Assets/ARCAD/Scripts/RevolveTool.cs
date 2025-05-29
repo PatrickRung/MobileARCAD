@@ -58,17 +58,19 @@ public class RevolveTool : MonoBehaviour
     float extrudeLength;
     public void useExtrudeTool(Vector2 pointerPos)
     {
-        if (Application.isMobilePlatform)
-        {
-            Vector2 objectScreenPos = new Vector2(Camera.main.WorldToScreenPoint(gameObject.transform.position).x,
-                                                    Camera.main.WorldToScreenPoint(gameObject.transform.position).y);
-            extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
-        }
-        else
-        {
-            extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
-        }
-        extrudeLength = -extrudeLength / 100;
+        Vector2 objectScreenPos = new Vector2(Camera.main.WorldToScreenPoint(gameObject.transform.position).x,
+                                                Camera.main.WorldToScreenPoint(gameObject.transform.position).y);
+        extrudeLength = Vector2.Distance(pointerPos, objectScreenPos);
+        extrudeLength = -Mathf.Abs(extrudeLength / 100);
+        finishExtrude();
+
+    }
+    public void useToggleExtrudeTool()
+    {
+
+        extrudeLength = playerCam.transform.InverseTransformPoint(gameObject.transform.position).z;
+        Debug.Log(playerCam.transform.InverseTransformPoint(gameObject.transform.position).z);
+        extrudeLength = -Mathf.Max(Mathf.Abs(extrudeLength * 100) - 3, 0);
         finishExtrude();
 
     }
@@ -122,17 +124,21 @@ public class RevolveTool : MonoBehaviour
             }
             // calculate normals
             int currCount = 0;
-            for(int j = 0; j < curvePoints.Count; j++) {
+            for (int j = 0; j < curvePoints.Count; j++)
+            {
                 // Calculate normals for not last row
                 Vector3 currTangVec = new Vector3(1, 0, 0);
                 Vector3 diffVec;
-                if(j == 0) {
+                if (j == 0)
+                {
                     diffVec = vertices[currCount + 1] - vertices[currCount];
                 }
-                else if(j == curvePoints.Count - 1) {
+                else if (j == curvePoints.Count - 1)
+                {
                     diffVec = vertices[currCount] - vertices[currCount - 1];
                 }
-                else {
+                else
+                {
                     diffVec = vertices[currCount + 1] - vertices[currCount - 1];
                 }
                 normals[currCount] = Vector3.Cross(diffVec, currTangVec);

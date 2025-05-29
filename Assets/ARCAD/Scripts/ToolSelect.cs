@@ -18,6 +18,7 @@ public class ToolSelect : MonoBehaviour
                     scaleButton,
                     measureButton,
                     extrudeButton,
+                    extrudeToggleButton,
                     revolveButton,
                     spawnButton;
     public InputHandler playerInputHandler;
@@ -43,6 +44,7 @@ public class ToolSelect : MonoBehaviour
         ScaleState,
         measureState,
         ExtrudeState,
+        extrudeToggleState,
         RevolveState,
         SpawnState
     }
@@ -57,7 +59,8 @@ public class ToolSelect : MonoBehaviour
         editNodes = GameObject.Find("PointEdit").GetComponent<Button>();
         scaleButton = GameObject.Find("Scaling").GetComponent<Button>();
         measureButton = GameObject.Find("Measure").GetComponent<Button>();
-        extrudeButton = GameObject.Find("Extrude").GetComponent<Button>();
+        extrudeButton = GameObject.Find("Extrude&Release").GetComponent<Button>();
+        extrudeToggleButton = GameObject.Find("ExtrudeToggle").GetComponent<Button>();
         revolveButton = GameObject.Find("Revolve").GetComponent<Button>();
         spawnButton = GameObject.Find("SpawnButton").GetComponent<Button>();
         playerInputHandler = GameObject.Find("UserInputHandler").GetComponent<InputHandler>();
@@ -76,6 +79,7 @@ public class ToolSelect : MonoBehaviour
         toggles.Add(scaleButton);
         toggles.Add(measureButton);
         toggles.Add(extrudeButton);
+        toggles.Add(extrudeToggleButton);
         toggles.Add(revolveButton);
         toggles.Add(spawnButton);
         modeSelector.SetActive(false);
@@ -142,7 +146,22 @@ public class ToolSelect : MonoBehaviour
             toolSelected = ToolSelectState.ExtrudeState;
         }
     }
-    public void spawnEdit() {
+    public void extrudeToggleEdit() {
+        if (toolSelected == ToolSelectState.extrudeToggleState)
+        {
+            clearButtonActive();
+            extrudeToggleButton.image.color = Color.white;
+            toolSelected = ToolSelectState.InactiveState;
+        }
+        else
+        {
+            clearButtonActive();
+            extrudeToggleButton.image.color = Color.gray;
+            toolSelected = ToolSelectState.extrudeToggleState;
+        }
+    }
+    public void spawnEdit()
+    {
         clearButtonActive();
         spawnButton.image.color = Color.gray;
         toolSelected = ToolSelectState.SpawnState;

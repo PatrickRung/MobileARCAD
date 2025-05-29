@@ -69,22 +69,12 @@ public class InputHandler : MonoBehaviour
         // prefabs
         spawnableObjects = Resources.LoadAll("Prefabs/", typeof(GameObject));
         // Extrude tool state
-        extruding = false;
     }
 
     public GameObject objectHeld;
-    bool extruding;
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (leftClick.IsPressed())
-        {
-            ExtrudeStatus.text = "true";
-        }
-        else
-        {
-            ExtrudeStatus.text = "false";
-        }  
         if (playerToolSelect.mode == ToolSelect.state.Scan) { return; }
         //Assign Debugging text
         if (debugMode)
@@ -175,7 +165,6 @@ public class InputHandler : MonoBehaviour
                             objectHeld.GetComponent<RevolveTool>() != null)
                     {
                         objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
-                        extruding = true;
                     }
                 }
                 else
@@ -188,6 +177,9 @@ public class InputHandler : MonoBehaviour
                 {
                     translateObject();
                 }
+                break;
+            case ToolSelect.ToolSelectState.extrudeToggleState:
+                objectHeld.GetComponent<RevolveTool>().useToggleExtrudeTool();
                 break;
             default:
                 // Do nothing
