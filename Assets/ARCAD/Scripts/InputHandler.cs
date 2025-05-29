@@ -85,11 +85,7 @@ public class InputHandler : MonoBehaviour
             userPressed.text = "user clicked" + leftClick.IsPressed();
             secondButtonPress.text = "second" + touchTwoPressed.IsPressed();
         }
-
-        bool secondPlayerClick = touchTwoPressed.IsPressed();
         fliFlopedInput = flipFlop(leftClick.IsPressed());
-
-        // If both fingers pressed down rotate
         if (leftClick.IsPressed())
         {
             RaycastHit objectHit;
@@ -100,7 +96,6 @@ public class InputHandler : MonoBehaviour
                 GameObject currObjecthit = objectHit.transform.gameObject;
                 if (currObjecthit.tag.Equals("SpawnObjects") || currObjecthit.tag.Equals("Interactable"))
                 {
-
                     if (objectHeld != null && objectHeld.GetInstanceID() != currObjecthit.GetInstanceID())
                     {
                         Debug.Log("here");
@@ -147,48 +142,50 @@ public class InputHandler : MonoBehaviour
             orignallRot = Vector3.zero;
             orignallObjectRot = Vector3.zero;
         }
-        
-        switch(playerToolSelect.toolSelected) 
+        // Functions that alter the selected object thus do not require
+        // functionality for reselct object or initial raycast
+        if (objectHeld == null) { return;  }   
+        switch (playerToolSelect.toolSelected)
         {
-        case ToolSelect.ToolSelectState.RotateState:
-            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
-            {
-                rotateObject();
-            }
-            break;
-        case ToolSelect.ToolSelectState.ScaleState:
-            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
-            {
-                scaleObject();
-            }
-            break;
-        case ToolSelect.ToolSelectState.ExtrudeState:
-            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
-            {
-                if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
-                        objectHeld.GetComponent<RevolveTool>() != null &&
-                        !extruding)
+            case ToolSelect.ToolSelectState.RotateState:
+                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
                 {
-                    objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
-                    extruding = true;
+                    rotateObject();
                 }
-                else if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
-                            extruding)
+                break;
+            case ToolSelect.ToolSelectState.ScaleState:
+                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed() && touchTwo.IsPressed())
                 {
-                    objectHeld.GetComponent<RevolveTool>().finishExtrude();
-                    extruding = false;
+                    scaleObject();
                 }
-            }
-            break;
-        case ToolSelect.ToolSelectState.TranslateState:
-            if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
-            {
-                translateObject();
-            }
-            break;
-        default:
+                break;
+            case ToolSelect.ToolSelectState.ExtrudeState:
+                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+                {
+                    if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
+                            objectHeld.GetComponent<RevolveTool>() != null &&
+                            !extruding)
+                    {
+                        objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
+                        extruding = true;
+                    }
+                    else if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
+                                extruding)
+                    {
+                        objectHeld.GetComponent<RevolveTool>().finishExtrude();
+                        extruding = false;
+                    }
+                }
+                break;
+            case ToolSelect.ToolSelectState.TranslateState:
+                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+                {
+                    translateObject();
+                }
+                break;
+            default:
                 // Do nothing
-            break;
+                break;
         }
     }
 
@@ -218,7 +215,7 @@ public class InputHandler : MonoBehaviour
         measureTextCurr.gameObject.transform.position = ((pointOne.transform.position - pointTwo.transform.position) / 2) + pointTwo.transform.position;
         measureTextCurr.gameObject.transform.position += objectHit.normal * 0.2f;
         // Convert from unity world to CM
-        // I measured 30 CM with a ruler and got 0.293029
+        // I measured 30 CM with a ruler and got 0.293029 in game space
         Distance = (Distance / 0.293029f) * 30f;
         measureTextCurr.transform.GetChild(0).GetComponent<TMP_Text>().text = "" + Distance + " CM";
         measureTextCurr.transform.LookAt(playerCam.transform.position);

@@ -139,8 +139,6 @@ public class RevolveTool : MonoBehaviour
                 float mag = Mathf.Sqrt(Mathf.Pow(normals[currCount].x, 2) + Mathf.Pow(normals[currCount].y, 2) + Mathf.Pow(normals[currCount].z, 2));
                 normals[currCount] = new Vector3(normals[currCount].x / mag, normals[currCount].y / mag, normals[currCount].z / mag);
                 normals[currCount + curvePoints.Count] = normals[currCount];
-                // Debug.DrawLine(vertices[currCount], vertices[currCount] + (normals[currCount] * 4f), Color.green);
-                //UVs[currCount % totalVertices] = new Vector2((float)i /  (float)subdivisions, currHeightLength / heightLength);
                 currCount++;
             }
             generateMesh();

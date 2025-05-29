@@ -36,6 +36,7 @@ public class ToolSelect : MonoBehaviour
     public state mode;
     public enum ToolSelectState
     {
+        InactiveState,
         TranslateState,
         RotateState,
         EditState,
@@ -181,6 +182,9 @@ public class ToolSelect : MonoBehaviour
     public void changeModeState()
     {
         TMP_Dropdown dropdown = modeSelector.GetComponent<TMP_Dropdown>();
+        // To prevent potential misclicks we have a temporary no functionality
+        // state that we go to when we change tools
+        toolSelected = ToolSelectState.InactiveState;
         if (dropdown.value == 0)
         {
             AnalysisSubMenu.SetActive(false);
@@ -195,7 +199,8 @@ public class ToolSelect : MonoBehaviour
             SketchSubMenu.SetActive(false);
             mode = state.Analysis;
         }
-        else if(dropdown.value == 2) {
+        else if (dropdown.value == 2)
+        {
             EditSubMenu.SetActive(false);
             AnalysisSubMenu.SetActive(false);
             SketchSubMenu.SetActive(true);
