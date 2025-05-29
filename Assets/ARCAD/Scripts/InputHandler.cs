@@ -13,7 +13,7 @@ public class InputHandler : MonoBehaviour
 
     //Debugging
     public TextMeshProUGUI rotationText, objectViewText, userPressed, pressPos,
-                            userDoubleTap, secondButtonPress, itemHeldID;
+                            userDoubleTap, secondButtonPress, itemHeldID, ExtrudeStatus;
     public GameObject debuggingSphere;
 
     // User inputs
@@ -60,6 +60,7 @@ public class InputHandler : MonoBehaviour
             secondButtonPress.gameObject.SetActive(false);
             userDoubleTap.gameObject.SetActive(false);
             itemHeldID.gameObject.SetActive(false);
+            ExtrudeStatus.gameObject.SetActive(false);
         }
         // Loads all files in the path Resources/Prefabs.
         // These files MUST be in the resources folder.
@@ -76,6 +77,14 @@ public class InputHandler : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (leftClick.IsPressed())
+        {
+            ExtrudeStatus.text = "true";
+        }
+        else
+        {
+            ExtrudeStatus.text = "false";
+        }  
         if (playerToolSelect.mode == ToolSelect.state.Scan) { return; }
         //Assign Debugging text
         if (debugMode)
@@ -98,7 +107,6 @@ public class InputHandler : MonoBehaviour
                 {
                     if (objectHeld != null && objectHeld.GetInstanceID() != currObjecthit.GetInstanceID())
                     {
-                        Debug.Log("here");
                         objectHeld.gameObject.GetComponent<MeshRenderer>().material =
                                 unselectedMat;
                     }
@@ -160,25 +168,23 @@ public class InputHandler : MonoBehaviour
                 }
                 break;
             case ToolSelect.ToolSelectState.ExtrudeState:
-                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+                if (!EventSystem.current.IsPointerOverGameObject() && leftClick.IsPressed())
                 {
+                    ExtrudeStatus.text = "true";
                     if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
-                            objectHeld.GetComponent<RevolveTool>() != null &&
-                            !extruding)
+                            objectHeld.GetComponent<RevolveTool>() != null)
                     {
                         objectHeld.GetComponent<RevolveTool>().useExtrudeTool(pointerPosition.ReadValue<Vector2>());
                         extruding = true;
                     }
-                    else if (playerToolSelect.toolSelected == ToolSelect.ToolSelectState.ExtrudeState &&
-                                extruding)
-                    {
-                        objectHeld.GetComponent<RevolveTool>().finishExtrude();
-                        extruding = false;
-                    }
                 }
+                else
+                {
+                    ExtrudeStatus.text = "false";
+                }  
                 break;
             case ToolSelect.ToolSelectState.TranslateState:
-                if (!EventSystem.current.IsPointerOverGameObject() && touchOne.IsPressed())
+                if (!EventSystem.current.IsPointerOverGameObject() && leftClick.IsPressed())
                 {
                     translateObject();
                 }

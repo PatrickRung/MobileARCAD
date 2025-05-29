@@ -133,13 +133,14 @@ public class ToolSelect : MonoBehaviour
         {
             clearButtonActive();
             extrudeButton.image.color = Color.white;
+            toolSelected = ToolSelectState.InactiveState;
         }
         else
         {
             clearButtonActive();
             extrudeButton.image.color = Color.gray;
+            toolSelected = ToolSelectState.ExtrudeState;
         }
-        toolSelected = ToolSelectState.ExtrudeState;
     }
     public void spawnEdit() {
         clearButtonActive();
