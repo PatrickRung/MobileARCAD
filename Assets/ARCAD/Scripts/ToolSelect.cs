@@ -20,7 +20,8 @@ public class ToolSelect : MonoBehaviour
                     extrudeButton,
                     extrudeToggleButton,
                     revolveButton,
-                    spawnButton;
+                    spawnButton,
+                    deleteButton;
     public InputHandler playerInputHandler;
 
 
@@ -63,6 +64,8 @@ public class ToolSelect : MonoBehaviour
         extrudeToggleButton = GameObject.Find("ExtrudeToggle").GetComponent<Button>();
         revolveButton = GameObject.Find("Revolve").GetComponent<Button>();
         spawnButton = GameObject.Find("SpawnButton").GetComponent<Button>();
+        deleteButton = GameObject.Find("Delete").GetComponent<Button>();
+
         playerInputHandler = GameObject.Find("UserInputHandler").GetComponent<InputHandler>();
 
         // Get Sub Menus
@@ -82,6 +85,7 @@ public class ToolSelect : MonoBehaviour
         toggles.Add(extrudeToggleButton);
         toggles.Add(revolveButton);
         toggles.Add(spawnButton);
+        toggles.Add(deleteButton);
         modeSelector.SetActive(false);
 
 

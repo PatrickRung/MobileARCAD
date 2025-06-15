@@ -344,5 +344,8 @@ public class InputHandler : MonoBehaviour
         return returnVal;
     }
 
-
+    public void deleteHeldObject()
+    {
+        GameObject.Destroy(objectHeld);
+    }
 }
