@@ -127,24 +127,55 @@ public class RevolveTool : MonoBehaviour
             for (int j = 0; j < curvePoints.Count; j++)
             {
                 // Calculate normals for not last row
-                Vector3 currTangVec = new Vector3(1, 0, 0);
-                Vector3 diffVec;
+                // Vector3 currTangVec = new Vector3(1, 0, 0);
+                // Vector3 diffVec;
+                // if (j == 0)
+                // {
+                //     diffVec = vertices[curvePoints.Count] - vertices[currCount];
+                // }
+                // else if (j == curvePoints.Count - 1)
+                // {
+                //     diffVec = vertices[currCount] - vertices[currCount - 1];
+                // }
+                // else
+                // {
+                //     diffVec = vertices[currCount + 1] - vertices[currCount - 1];
+                // }
+                // normals[currCount] = Vector3.Cross(diffVec, currTangVec);
+                // float mag = Mathf.Sqrt(Mathf.Pow(normals[currCount].x, 2) + Mathf.Pow(normals[currCount].y, 2) + Mathf.Pow(normals[currCount].z, 2));
+                // normals[currCount] = new Vector3(normals[currCount].x / mag, normals[currCount].y / mag, normals[currCount].z / mag);
+                // normals[currCount + curvePoints.Count] = normals[currCount];
+                Vector3 diffVec = vertices[currCount + curvePoints.Count] - vertices[currCount];
                 if (j == 0)
                 {
-                    diffVec = vertices[currCount + 1] - vertices[currCount];
+                    Vector3 towardsOrigVec = vertices[currCount + curvePoints.Count - 1] - vertices[currCount];
+                    Vector3 awayOriVec = vertices[currCount + 1] - vertices[currCount];
+                    normals[currCount] = Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
+                    towardsOrigVec = vertices[currCount + (curvePoints.Count * 2)  - 1] - vertices[currCount + curvePoints.Count];
+                    awayOriVec = vertices[currCount + curvePoints.Count + 1] - vertices[currCount + curvePoints.Count];
+                    diffVec = -diffVec;
+                    normals[currCount + curvePoints.Count] = -Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
                 }
                 else if (j == curvePoints.Count - 1)
                 {
-                    diffVec = vertices[currCount] - vertices[currCount - 1];
+                    Vector3 towardsOrigVec = vertices[currCount - 1] - vertices[currCount];
+                    Vector3 awayOriVec = vertices[currCount - (curvePoints.Count - 1)] - vertices[currCount];
+                    normals[currCount] = Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
+                    towardsOrigVec = vertices[currCount + curvePoints.Count - 1] - vertices[currCount + curvePoints.Count];
+                    awayOriVec = vertices[currCount + curvePoints.Count - (curvePoints.Count - 1)] - vertices[currCount + (curvePoints.Count / 2)];
+                    diffVec = -diffVec;
+                    normals[currCount + curvePoints.Count] = -Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
                 }
                 else
                 {
-                    diffVec = vertices[currCount + 1] - vertices[currCount - 1];
+                    Vector3 towardsOrigVec = vertices[currCount - 1] - vertices[currCount];
+                    Vector3 awayOriVec = vertices[currCount + 1] - vertices[currCount];
+                    normals[currCount] = Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
+                    towardsOrigVec = vertices[currCount + curvePoints.Count - 1] - vertices[currCount + curvePoints.Count];
+                    awayOriVec = vertices[currCount + curvePoints.Count + 1] - vertices[currCount + curvePoints.Count];
+                    diffVec = -diffVec;
+                    normals[currCount + curvePoints.Count] = -Vector3.Normalize(diffVec + towardsOrigVec + awayOriVec);
                 }
-                normals[currCount] = Vector3.Cross(diffVec, currTangVec);
-                float mag = Mathf.Sqrt(Mathf.Pow(normals[currCount].x, 2) + Mathf.Pow(normals[currCount].y, 2) + Mathf.Pow(normals[currCount].z, 2));
-                normals[currCount] = new Vector3(normals[currCount].x / mag, normals[currCount].y / mag, normals[currCount].z / mag);
-                normals[currCount + curvePoints.Count] = normals[currCount];
                 currCount++;
             }
             generateMesh();
